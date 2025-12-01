@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>English Learner</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        overflow: hidden;
+      }
+      body {
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .app {
+        width: 100%;
+        max-width: 500px;
+        height: 100%;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .back-btn {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.25);
+        border: none;
+        color: white;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      h1 {
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      /* Screens */
+      .screen {
+        display: none;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+      .screen.active {
+        display: flex;
+      }
+
+      /* Home Screen */
+      .home {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 30px;
+        gap: 30px;
+      }
+      .home-btn {
+        width: 100%;
+        padding: 28px;
+        font-size: 22px;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg, #4a6cf7, #2575fc);
+        border: none;
+        border-radius: 22px;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(74, 108, 247, 0.4);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+      }
+      .home-btn:active {
+        transform: translateY(6px);
+        box-shadow: 0 6px 15px rgba(74, 108, 247, 0.3);
+      }
+
+      /* General Content */
+      .content {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 20px;
+        background: #f8f9ff;
+      }
+
+      /* Custom Scrollbar Styles */
+      .content::-webkit-scrollbar {
+        width: 6px;
+      }
+      .content::-webkit-scrollbar-track {
+        background: rgba(74, 108, 247, 0.1);
+        border-radius: 10px;
+        margin: 5px;
+      }
+      .content::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+        border-radius: 10px;
+        border: 2px solid #f8f9ff;
+      }
+      .content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #3a5cd7, #5a0fb5);
+      }
+      .content::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+
+      /* Firefox scrollbar */
+      .content {
+        scrollbar-width: thin;
+        scrollbar-color: #4a6cf7 rgba(74, 108, 247, 0.1);
+      }
+
+      /* Word Memorization - Kichikroq kartalar */
+      .word-card {
+        background: white;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #4a6cf7;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .word-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .word-content {
+        flex: 1;
+      }
+      .en {
+        font-size: 22px;
+        font-weight: bold;
+        color: #4a6cf7;
+        margin-bottom: 4px;
+        line-height: 1.2;
+      }
+      .uz {
+        font-size: 18px;
+        color: #333;
+        line-height: 1.3;
+      }
+      .pron {
+        font-size: 14px;
+        color: #6c757d;
+        font-style: italic;
+        background: rgba(74, 108, 247, 0.05);
+        padding: 4px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-top: 4px;
+      }
+      .speak-btn {
+        background: #4a6cf7;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 3px 10px rgba(74, 108, 247, 0.3);
+        flex-shrink: 0;
+        min-width: 44px;
+        height: 44px;
+        justify-content: center;
+      }
+      .speak-btn:active {
+        transform: scale(0.95);
+      }
+      .speak-btn .fa-volume-up {
+        font-size: 16px;
+      }
+
+      /* Voice Settings Panel */
+      .voice-panel {
+        background: white;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #4a6cf7;
+      }
+      .voice-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .voice-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .voice-btn {
+        padding: 10px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+        transition: all 0.2s;
+      }
+      .voice-btn.active {
+        border-color: #4a6cf7;
+        background: #4a6cf7;
+        color: white;
+      }
+
+      /* Speaking Practice */
+      .speaking-center {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        gap: 40px;
+      }
+      .uz-word {
+        font-size: 38px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+        line-height: 1.3;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 20px 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e9ecef;
+      }
+      .hint-btn,
+      .mic-btn {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 40px;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .hint-btn {
+        background: #28a745;
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+      }
+      .hint-btn:active {
+        transform: scale(0.95);
+      }
+      .mic-btn {
+        background: #dc3545;
+        font-size: 50px;
+        width: 120px;
+        height: 120px;
+        box-shadow: 0 12px 35px rgba(220, 53, 69, 0.3);
+      }
+      .mic-btn:active {
+        transform: scale(0.95);
+      }
+      .mic-btn.listening {
+        background: #28a745;
+        animation: pulse 1.8s infinite;
+        box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 30px rgba(40, 167, 69, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+        }
+      }
+      .result {
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        min-height: 60px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        padding: 15px 25px;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e9ecef;
+      }
+
+      .settings-item {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #4a6cf7;
+      }
+      .settings-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .settings-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .theme-btn,
+      .voice-btn,
+      .color-btn {
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        background: white;
+        cursor: pointer;
+        font-size: 16px;
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+      .theme-btn.active,
+      .voice-btn.active,
+      .color-btn.active {
+        border-color: #4a6cf7;
+        background: #4a6cf7;
+        color: white;
+      }
+      .color-option {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid transparent;
+      }
+      .color-option.active {
+        border-color: #333;
+      }
+      /* Quiz */
+      .question {
+        font-size: 42px;
+        text-align: center;
+        margin: 30px 0;
+        font-weight: bold;
+        color: #333;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e9ecef;
+      }
+      .options {
+        display: grid;
+        gap: 16px;
+      }
+      .opt {
+        padding: 22px;
+        font-size: 20px;
+        background: white;
+        border: 3px solid #e0e0e0;
+        border-radius: 18px;
+        cursor: pointer;
+        text-align: center;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        opacity: 1;
+      }
+      .opt.correct {
+        border-color: #28a745;
+        background: #d4edda;
+        color: #155724;
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
+      }
+      .opt.wrong {
+        border-color: #dc3545;
+        background: #f8d7da;
+        color: #721c24;
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.2);
+      }
+
+      .next-btn {
+        margin: 30px auto;
+        padding: 18px 40px;
+        background: #4a6cf7;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 20px;
+        cursor: pointer;
+        display: block;
+        box-shadow: 0 6px 15px rgba(74, 108, 247, 0.3);
+        opacity: 0.3;
+        transition: opacity 0.3s;
+        pointer-events: none;
+      }
+      .next-btn.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .next-btn:active {
+        transform: scale(0.95);
+      }
+      .score {
+        text-align: center;
+        padding: 12px;
+        background: #e3f2fd;
+        color: #1976d2;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+      }
+
+      /* Progress indicator */
+      .progress {
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+        border-radius: 3px;
+        transition: width 0.3s;
+        box-shadow: 0 2px 8px rgba(74, 108, 247, 0.3);
+      }
+
+      /* Word counter */
+      .word-counter {
+        text-align: center;
+        padding: 8px 16px;
+        background: rgba(74, 108, 247, 0.1);
+        color: #4a6cf7;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 20px;
+        margin-bottom: 15px;
+        display: inline-block;
+      }
+
+      /* Settings Screen */
+      .settings-item {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #4a6cf7;
+      }
+      .settings-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .settings-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .theme-btn,
+      .color-btn {
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        background: white;
+        cursor: pointer;
+        font-size: 16px;
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+      .theme-btn.active,
+      .color-btn.active {
+        border-color: #4a6cf7;
+        background: #4a6cf7;
+        color: white;
+      }
+      .color-option {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid transparent;
+      }
+      .color-option.active {
+        border-color: #333;
+      }
+
+      /* Word categories */
+      .category-filter {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      .category-btn {
+        padding: 8px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 20px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .category-btn.active {
+        border-color: #4a6cf7;
+        background: #4a6cf7;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Home Screen -->
+      <div id="home" class="screen active">
+        <header><h1>English Learner</h1></header>
+        <div class="home">
+          <button class="home-btn" onclick="showScreen('memorize')">
+            <i class="fas fa-book-open"></i> Word Memorization
+          </button>
+          <button class="home-btn" onclick="showScreen('quiz')">
+            <i class="fas fa-pencil-alt"></i> Practice Exercises
+          </button>
+          <button class="home-btn" onclick="showScreen('speaking')">
+            <i class="fas fa-microphone"></i> Speaking Practice
+          </button>
+          <button class="home-btn" onclick="showScreen('settings')">
+            <i class="fas fa-cog"></i> Settings
+          </button>
+        </div>
+      </div>
+
+      <!-- Word Memorization Screen -->
+      <div id="memorize" class="screen">
+        <header>
+          <button class="back-btn" onclick="showScreen('home')">←</button>
+          <h1>Word Memorization</h1>
+        </header>
+        <div class="content" id="wordList">
+          <!-- Voice Settings Panel -->
+          <div class="voice-panel">
+            <div class="voice-title">
+              <i class="fas fa-volume-up"></i>
+              Pronunciation Voice
+            </div>
+            <div class="voice-options">
+              <button
+                class="voice-btn active"
+                onclick="changeVoice('female')"
+              >
+                Female Voice
+              </button>
+              <button class="voice-btn" onclick="changeVoice('male')">
+                Male Voice
+              </button>
+              <button class="voice-btn" onclick="changeVoice('child')">
+                Child Voice
+              </button>
+              <button class="voice-btn" onclick="changeVoice('slow')">
+                Slow Speed
+              </button>
+            </div>
+          </div>
+          
+          <!-- Category Filter -->
+          <div class="category-filter" id="categoryFilter"></div>
+          
+          <div class="word-counter" id="wordCounter"></div>
+        </div>
+      </div>
+
+      <!-- Quiz Screen -->
+      <div id="quiz" class="screen">
+        <header>
+          <button class="back-btn" onclick="showScreen('home')">←</button>
+          <h1>Practice Quiz</h1>
+        </header>
+        <div class="score">
+          Score: <span id="scoreValue">0</span> / <span id="totalValue">0</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="quizProgress" style="width: 0%"></div>
+        </div>
+        <div class="content">
+          <div class="question" id="questionText"></div>
+          <div class="options" id="optionsContainer"></div>
+          <div class="result" id="feedback"></div>
+          <button class="next-btn" id="nextButton">Next →</button>
+        </div>
+      </div>
+
+      <!-- Speaking Practice Screen -->
+      <div id="speaking" class="screen">
+        <header>
+          <button class="back-btn" onclick="showScreen('home')">←</button>
+          <h1>Speaking Practice</h1>
+        </header>
+        <div class="content" style="padding: 0">
+          <div class="speaking-center">
+            <div class="uz-word" id="uzWord">Tap the microphone to start</div>
+            <button class="hint-btn" onclick="giveHint()">
+              <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="mic-btn" id="micButton">
+              <i class="fas fa-microphone"></i>
+            </button>
+            <div class="result" id="speakingResult"></div>
+            <button
+              class="next-btn"
+              id="nextWordButton"
+              onclick="nextSpeakingWord()"
+            >
+              Next Word →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Screen -->
+      <div id="settings" class="screen">
+        <header>
+          <button class="back-btn" onclick="showScreen('home')">←</button>
+          <h1>Settings</h1>
+        </header>
+        <div class="content">
+          <!-- Voice Settings -->
+          <div class="settings-item">
+            <div class="settings-title">
+              <i class="fas fa-volume-up"></i>
+              Voice Settings
+            </div>
+            <div class="settings-options">
+              <button
+                class="voice-btn active"
+                onclick="changeVoice('female')"
+              >
+                Female Voice
+              </button>
+              <button class="voice-btn" onclick="changeVoice('male')">
+                Male Voice
+              </button>
+              <button class="voice-btn" onclick="changeVoice('child')">
+                Child Voice
+              </button>
+              <button class="voice-btn" onclick="changeVoice('slow')">
+                Slow Speed
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-title">
+              <i class="fas fa-palette"></i>
+              Theme
+            </div>
+            <div class="settings-options">
+              <button class="theme-btn active" onclick="changeTheme('light')">
+                Light
+              </button>
+              <button class="theme-btn" onclick="changeTheme('dark')">
+                Dark
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-title">
+              <i class="fas fa-fill-drip"></i>
+              App Color
+            </div>
+            <div class="settings-options">
+              <div
+                class="color-option active"
+                style="background: #4a6cf7"
+                onclick="changeColor('#4a6cf7')"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #28a745"
+                onclick="changeColor('#28a745')"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #dc3545"
+                onclick="changeColor('#dc3545')"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #ff6b35"
+                onclick="changeColor('#ff6b35')"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #6f42c1"
+                onclick="changeColor('#6f42c1')"
+              ></div>
+              <div
+                class="color-option"
+                style="background: #20c997"
+                onclick="changeColor('#20c997')"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Words database with pronunciation and categories
+      const words = [
+    // Adverbs of frequency
+    {en:"always", pron:"ˈɔːlweɪz", uz:"har doim", category:"adverbs"},
+    {en:"usually", pron:"ˈjuːʒuəli", uz:"odatda", category:"adverbs"},
+    {en:"sometimes", pron:"ˈsʌmtaɪmz", uz:"ba'zan", category:"adverbs"},
+    {en:"never", pron:"ˈnevər", uz:"hech qachon", category:"adverbs"},
+
+    // Daily routine
+    {en:"get up", pron:"get ʌp", uz:"uyg'onmoq, turmoq", category:"daily routine"},
+    {en:"have a shower", pron:"hæv ə ˈʃaʊər", uz:"dush qilmoq", category:"daily routine"},
+    {en:"have breakfast", pron:"hæv ˈbrekfəst", uz:"nonushta qilmoq", category:"daily routine"},
+    {en:"go to work", pron:"goʊ tu wɜːrk", uz:"ishga bormoq", category:"daily routine"},
+    {en:"go to school", pron:"goʊ tu skuːl", uz:"maktabga bormoq", category:"daily routine"},
+    {en:"have lunch", pron:"hæv lʌntʃ", uz:"tushlik qilmoq", category:"daily routine"},
+    {en:"have dinner", pron:"hæv ˈdɪnər", uz:"kechki ovqat qilmoq", category:"daily routine"},
+    {en:"go to bed", pron:"goʊ tu bed", uz:"uxlashga yotmoq", category:"daily routine"},
+    {en:"do housework", pron:"duː ˈhaʊswɜːrk", uz:"uy ishlarini qilmoq", category:"daily routine"},
+    {en:"watch TV", pron:"wɒtʃ ˌtiːˈviː", uz:"televizor ko'rmoq", category:"daily routine"},
+    {en:"read a newspaper", pron:"riːd ə ˈnjuːzˌpeɪpər", uz:"gazeta o'qimoq", category:"daily routine"},
+
+    // Time words
+    {en:"then", pron:"ðen", uz:"keyin", category:"time"},
+    {en:"after", pron:"ˈæftər", uz:"…dan keyin", category:"time"},
+    {en:"before", pron:"bɪˈfɔːr", uz:"…dan oldin", category:"time"},
+    {en:"in the morning", pron:"ɪn ðə ˈmɔːrnɪŋ", uz:"ertalab", category:"time"},
+    {en:"in the afternoon", pron:"ɪn ðə ˌæftərˈnuːn", uz:"tushdan keyin", category:"time"},
+    {en:"in the evening", pron:"ɪn ði ˈiːvnɪŋ", uz:"kechqurun", category:"time"},
+    {en:"at the weekend", pron:"æt ðə ˌwiːkˈend", uz:"hafta oxirida", category:"time"},
+    {en:"until", pron:"ənˈtɪl", uz:"…gacha", category:"time"},
+    {en:"at about", pron:"æt əˈbaʊt", uz:"taxminan", category:"time"},
+
+    // Lesson & reading vocabulary
+    {en:"hurry", pron:"ˈhʌri", uz:"shoshilmoq", category:"verbs"},
+    {en:"towel", pron:"ˈtaʊəl", uz:"sochiq", category:"objects"},
+    {en:"floor", pron:"flɔːr", uz:"pol", category:"objects"},
+    {en:"clothes", pron:"kloʊðz", uz:"kiyimlar", category:"objects"},
+    {en:"steak", pron:"steɪk", uz:"bifshteks, go'sht bo'lagi", category:"food"},
+    {en:"ballet", pron:"bæˈleɪ", uz:"balet", category:"arts"},
+    {en:"ballet dancer", pron:"ˈbæleɪ ˌdænsər", uz:"balet raqqosi", category:"arts"},
+    {en:"sleep", pron:"sliːp", uz:"uyqu, uxlash", category:"verbs"},
+    {en:"practise", pron:"ˈpræktɪs", uz:"mashq qilmoq", category:"verbs"},
+    {en:"hotel", pron:"hoʊˈtel", uz:"mehmonxona", category:"places"},
+    {en:"hungry", pron:"ˈhʌŋɡri", uz:"och", category:"adjectives"},
+
+    // /j/ sound
+    {en:"yacht", pron:"jɒt", uz:"yaxta", category:"objects"},
+    {en:"you", pron:"juː", uz:"sen", category:"pronouns"},
+    {en:"your", pron:"jɔːr", uz:"sening", category:"pronouns"},
+    {en:"yes", pron:"jes", uz:"ha", category:"interjections"},
+    {en:"music", pron:"ˈmjuːzɪk", uz:"musiqa", category:"arts"},
+    {en:"beautiful", pron:"ˈbjuːtɪfəl", uz:"chiroyli", category:"adjectives"},
+    {en:"student", pron:"ˈstjuːdənt", uz:"talaba", category:"people"},
+
+    // A Typical Day – qo'shimcha so'zlar
+    {en:"finish work", pron:"ˈfɪnɪʃ wɜːrk", uz:"ishni tugatmoq", category:"daily routine"},
+    {en:"go home", pron:"goʊ hoʊm", uz:"uyga bormoq", category:"daily routine"},
+    {en:"go shopping", pron:"goʊ ˈʃɒpɪŋ", uz:"do'konga bormoq / xarid qilmoq", category:"daily routine"},
+    {en:"have a bath", pron:"hæv ə bɑːθ", uz:"vanna qilmoq", category:"daily routine"},
+    {en:"make dinner", pron:"meɪk ˈdɪnər", uz:"kechki ovqat tayyorlamoq", category:"daily routine"},
+
+    // Family Members — Oila A'zolari (Qo'shilgan so'zlar)
+    {en:"mother", pron:"", uz:"ona", category:"family members"},
+    {en:"mom", pron:"", uz:"oyi", category:"family members"},
+    {en:"father", pron:"", uz:"ota", category:"family members"},
+    {en:"mother-in-law", pron:"", uz:"qaynona", category:"family members"},
+    {en:"father-in-law", pron:"", uz:"qaynota", category:"family members"},
+    {en:"partner", pron:"", uz:"juft / sherik", category:"family members"},
+    {en:"dad", pron:"", uz:"dada", category:"family members"},
+    {en:"parent", pron:"", uz:"ota-ona", category:"family members"},
+    {en:"children", pron:"", uz:"bolalar", category:"family members"},
+    {en:"uncle", pron:"", uz:"tog'a / amaki", category:"family members"},
+    {en:"niece", pron:"", uz:"jiyan qiz", category:"family members"},
+    {en:"nephew", pron:"", uz:"jiyan o'g'il", category:"family members"},
+    {en:"grandson", pron:"", uz:"nabira o'g'il", category:"family members"},
+    {en:"granddaughter", pron:"", uz:"nabira qiz", category:"family members"},
+    {en:"grandchild", pron:"", uz:"nabira", category:"family members"},
+    {en:"sister-in-law", pron:"", uz:"qaynsingil / kelin", category:"family members"},
+    {en:"brother-in-law", pron:"", uz:"qaynaka / quda", category:"family members"},
+    {en:"stepmother", pron:"", uz:"o'gay ona", category:"family members"},
+    {en:"stepfather", pron:"", uz:"o'gay ota", category:"family members"},
+    {en:"aunt", pron:"", uz:"xola / amma", category:"family members"},
+    {en:"cousin", pron:"", uz:"jiyan / qarindosh", category:"family members"},
+    {en:"husband", pron:"", uz:"er", category:"family members"},
+    {en:"wife", pron:"", uz:"xotin / turmush o'rtog'i", category:"family members"},
+    {en:"ex", pron:"", uz:"sobiq turmush o'rtog'i", category:"family members"},
+    {en:"son", pron:"", uz:"o'g'il", category:"family members"},
+    {en:"daughter", pron:"", uz:"qiz", category:"family members"},
+    {en:"sister", pron:"", uz:"opa-singil", category:"family members"},
+    {en:"brother", pron:"", uz:"aka-uka", category:"family members"},
+    {en:"grandmother", pron:"", uz:"buvi", category:"family members"},
+    {en:"grandfather", pron:"", uz:"bobo", category:"family members"},
+    {en:"grandparent", pron:"", uz:"keksalar / bobo-buvi", category:"family members"}
+];
+
+      // App state
+      let currentWord = null;
+      let quizScore = 0;
+      let quizTotal = 0;
+      let recognition = null;
+      let isListening = false;
+      let appSettings = {
+        theme: "light",
+        color: "#4a6cf7",
+        voice: "female", // Unified voice setting
+        currentCategory: "all"
+      };
+
+      // Screen navigation
+      function showScreen(screenId) {
+        // Hide all screens
+        document.querySelectorAll(".screen").forEach((screen) => {
+          screen.classList.remove("active");
+        });
+
+        // Show the selected screen
+        document.getElementById(screenId).classList.add("active");
+
+        // Initialize screen content
+        if (screenId === "memorize") {
+          loadWords();
+        } else if (screenId === "quiz") {
+          resetQuiz();
+          nextQuestion();
+        } else if (screenId === "speaking") {
+          nextSpeakingWord();
+        }
+      }
+
+      // Word memorization functionality
+      function loadWords() {
+        const wordList = document.getElementById("wordList");
+        const wordCounter = document.getElementById("wordCounter");
+        const categoryFilter = document.getElementById("categoryFilter");
+
+        // Get unique categories
+        const categories = ["all", ...new Set(words.map(word => word.category))];
+        
+        // Create category filter buttons
+        categoryFilter.innerHTML = categories.map(category => `
+          <button class="category-btn ${category === appSettings.currentCategory ? 'active' : ''}" 
+                  onclick="filterByCategory('${category}')">
+            ${category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        `).join('');
+
+        // Filter words by category
+        const filteredWords = appSettings.currentCategory === "all" 
+          ? words 
+          : words.filter(word => word.category === appSettings.currentCategory);
+
+        // Update word counter
+        wordCounter.textContent = `Showing: ${filteredWords.length} words`;
+
+        wordList.innerHTML = filteredWords
+          .map(
+            (word) => `
+                <div class="word-card">
+                    <div class="word-header">
+                        <div class="word-content">
+                            <div class="en">${word.en}</div>
+                            <div class="uz">${word.uz}</div>
+                            <div class="pron">/${word.pron}/</div>
+                        </div>
+                        <button class="speak-btn" onclick="speakWord('${word.en}')" title="Pronounce">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Filter words by category
+      function filterByCategory(category) {
+        appSettings.currentCategory = category;
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        loadWords();
+      }
+
+      // Unified voice function for all parts of the app
+      function speakWord(text) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        // Create and configure utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+
+        // Apply voice settings
+        switch (appSettings.voice) {
+          case "male":
+            // Male voice - lower pitch, normal speed
+            utterance.rate = 0.9;
+            utterance.pitch = 0.7;
+            utterance.volume = 1.0;
+            break;
+          case "child":
+            // Child voice - higher pitch, slower
+            utterance.rate = 0.8;
+            utterance.pitch = 1.5;
+            utterance.volume = 0.9;
+            break;
+          case "slow":
+            // Slow voice - very slow
+            utterance.rate = 0.6;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            break;
+          default: // female
+            // Female voice - normal pitch, normal speed
+            utterance.rate = 0.9;
+            utterance.pitch = 1.2;
+            utterance.volume = 1.0;
+        }
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+      }
+
+      // Unified voice change function
+      function changeVoice(voice) {
+        appSettings.voice = voice;
+        document
+          .querySelectorAll(".voice-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.target.classList.add("active");
+      }
+
+      // Speaking practice functionality
+      function nextSpeakingWord() {
+        // Select a random word
+        currentWord = words[Math.floor(Math.random() * words.length)];
+
+        // Update UI
+        document.getElementById("uzWord").textContent = currentWord.uz;
+        document.getElementById("speakingResult").textContent = "";
+        document.getElementById("speakingResult").style.color = "#333";
+        document.getElementById("micButton").classList.remove("listening");
+        document.getElementById("nextWordButton").style.display = "none";
+
+        // Stop any ongoing recognition
+        if (recognition) {
+          recognition.stop();
+        }
+        isListening = false;
+      }
+
+      function giveHint() {
+        if (currentWord) {
+          speakWord(currentWord.en);
+        }
+      }
+
+      // Microphone functionality
+      document
+        .getElementById("micButton")
+        .addEventListener("click", function () {
+          if (isListening) {
+            stopListening();
+            return;
+          }
+
+          startListening();
+        });
+
+      function startListening() {
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          document.getElementById("speakingResult").textContent =
+            "Speech recognition is not supported in this browser. Try Chrome or Edge.";
+          document.getElementById("speakingResult").style.color = "#dc3545";
+          return;
+        }
+
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 3;
+
+        recognition.onstart = function () {
+          isListening = true;
+          document.getElementById("micButton").classList.add("listening");
+          document.getElementById("speakingResult").textContent =
+            "Listening... Speak now";
+          document.getElementById("speakingResult").style.color = "#333";
+        };
+
+        recognition.onresult = function (event) {
+          const result = event.results[0];
+          let bestMatch = "";
+          let confidence = 0;
+
+          for (let i = 0; i < result.length; i++) {
+            const spokenText = result[i].transcript.trim().toLowerCase();
+            const currentConfidence = result[i].confidence;
+
+            if (currentConfidence > confidence) {
+              confidence = currentConfidence;
+              bestMatch = spokenText;
+            }
+          }
+
+          const correctAnswer = currentWord.en.toLowerCase();
+          const isCorrect = checkAnswerMatch(bestMatch, correctAnswer);
+
+          document.getElementById("speakingResult").style.color = isCorrect
+            ? "#28a745"
+            : "#dc3545";
+          document.getElementById("speakingResult").textContent = isCorrect
+            ? "✅ Correct! Well done!"
+            : `❌ Try again. You said: "${bestMatch}"`;
+
+          if (isCorrect) {
+            speakWord("Excellent!");
+            document.getElementById("nextWordButton").style.display = "block";
+          }
+        };
+
+        recognition.onerror = function (event) {
+          console.log("Speech recognition error:", event.error);
+          if (event.error === "no-speech") {
+            document.getElementById("speakingResult").textContent =
+              "No speech detected. Try again.";
+          } else if (event.error === "audio-capture") {
+            document.getElementById("speakingResult").textContent =
+              "No microphone found.";
+          } else if (event.error === "not-allowed") {
+            document.getElementById("speakingResult").textContent =
+              "Microphone permission denied.";
+          } else {
+            document.getElementById("speakingResult").textContent =
+              "Error: " + event.error;
+          }
+          document.getElementById("speakingResult").style.color = "#dc3545";
+          stopListening();
+        };
+
+        recognition.onend = function () {
+          stopListening();
+        };
+
+        try {
+          recognition.start();
+        } catch (error) {
+          document.getElementById("speakingResult").textContent =
+            "Error starting recognition: " + error.message;
+          document.getElementById("speakingResult").style.color = "#dc3545";
+        }
+      }
+
+      function checkAnswerMatch(spoken, correct) {
+        spoken = spoken.replace(/\s+/g, " ").trim();
+        correct = correct.replace(/\s+/g, " ").trim();
+
+        if (spoken === correct) return true;
+        if (spoken.includes(correct) || correct.includes(spoken)) return true;
+
+        const spokenWords = spoken.split(" ");
+        const correctWords = correct.split(" ");
+
+        if (spokenWords.length === correctWords.length) {
+          let matchCount = 0;
+          for (let i = 0; i < spokenWords.length; i++) {
+            if (spokenWords[i] === correctWords[i]) {
+              matchCount++;
+            }
+          }
+          if (matchCount / spokenWords.length >= 0.8) return true;
+        }
+
+        return false;
+      }
+
+      function stopListening() {
+        if (recognition) {
+          try {
+            recognition.stop();
+          } catch (e) {}
+        }
+        isListening = false;
+        document.getElementById("micButton").classList.remove("listening");
+      }
+
+      // Quiz functionality
+      function resetQuiz() {
+        quizScore = 0;
+        quizTotal = 0;
+        document.getElementById("scoreValue").textContent = "0";
+        document.getElementById("totalValue").textContent = "0";
+        document.getElementById("quizProgress").style.width = "0%";
+      }
+
+      function nextQuestion() {
+        const nextButton = document.getElementById("nextButton");
+        nextButton.classList.remove("active");
+        document.getElementById("feedback").textContent = "";
+        document.getElementById("feedback").style.color = "#333";
+
+        const isEnglishToUzbek = Math.random() < 0.5;
+        const correctWord = words[Math.floor(Math.random() * words.length)];
+
+        document.getElementById("questionText").textContent = isEnglishToUzbek
+          ? correctWord.en
+          : correctWord.uz;
+
+        let options = [correctWord];
+        while (options.length < 4) {
+          const randomWord = words[Math.floor(Math.random() * words.length)];
+          if (!options.some((opt) => opt.en === randomWord.en)) {
+            options.push(randomWord);
+          }
+        }
+
+        options.sort(() => Math.random() - 0.5);
+
+        document.getElementById("optionsContainer").innerHTML = options
+          .map(
+            (option) => `
+                <div class="opt" onclick="selectAnswer(this, '${option.en}', '${
+              correctWord.en
+            }', ${isEnglishToUzbek})">
+                    ${isEnglishToUzbek ? option.uz : option.en}
+                </div>
+            `
+          )
+          .join("");
+
+        document.getElementById("quizProgress").style.width = `${
+          (quizTotal / 10) * 100
+        }%`;
+      }
+
+      function selectAnswer(
+        element,
+        selectedAnswer,
+        correctAnswer,
+        isEnglishToUzbek
+      ) {
+        quizTotal++;
+        document.getElementById("totalValue").textContent = quizTotal;
+
+        if (selectedAnswer === correctAnswer) {
+          quizScore++;
+          document.getElementById("scoreValue").textContent = quizScore;
+          element.classList.add("correct");
+          document.getElementById("feedback").textContent = "Correct!";
+          document.getElementById("feedback").style.color = "#28a745";
+        } else {
+          element.classList.add("wrong");
+          const correctTranslation = isEnglishToUzbek
+            ? words.find((w) => w.en === correctAnswer).uz
+            : correctAnswer;
+          document.getElementById(
+            "feedback"
+          ).innerHTML = `${correctTranslation}`;
+          document.getElementById("feedback").style.color = "#dc3545";
+
+          document.querySelectorAll(".opt").forEach((opt) => {
+            const optText = opt.textContent.trim();
+            const correctOptText = isEnglishToUzbek
+              ? words.find((w) => w.en === correctAnswer).uz
+              : correctAnswer;
+            if (optText === correctOptText) {
+              opt.classList.add("correct");
+            }
+          });
+        }
+
+        document.querySelectorAll(".opt").forEach((opt) => {
+          opt.style.pointerEvents = "none";
+        });
+
+        const nextButton = document.getElementById("nextButton");
+        nextButton.classList.add("active");
+        nextButton.onclick = function () {
+          nextQuestion();
+        };
+
+        document.getElementById("quizProgress").style.width = `${
+          (quizTotal / 10) * 100
+        }%`;
+      }
+
+      // Settings functions
+      function changeTheme(theme) {
+        appSettings.theme = theme;
+        document
+          .querySelectorAll(".theme-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.target.classList.add("active");
+
+        if (theme === "dark") {
+          document.body.style.filter = "invert(1) hue-rotate(180deg)";
+        } else {
+          document.body.style.filter = "none";
+        }
+      }
+
+      function changeColor(color) {
+        appSettings.color = color;
+        document
+          .querySelectorAll(".color-option")
+          .forEach((opt) => opt.classList.remove("active"));
+        event.target.classList.add("active");
+
+        document.documentElement.style.setProperty("--primary-color", color);
+        document.querySelectorAll("header").forEach((header) => {
+          header.style.background = `linear-gradient(135deg, ${color}, ${darkenColor(
+            color,
+            20
+          )})`;
+        });
+        document
+          .querySelectorAll(".speak-btn, .home-btn, .next-btn")
+          .forEach((btn) => {
+            btn.style.background = color;
+          });
+        document.querySelectorAll(".word-card, .progress-bar").forEach((el) => {
+          el.style.borderLeftColor = color;
+        });
+      }
+
+      function darkenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) - amt;
+        const G = ((num >> 8) & 0x00ff) - amt;
+        const B = (num & 0x0000ff) - amt;
+        return (
+          "#" +
+          (
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255)
+          )
+            .toString(16)
+            .slice(1)
+        );
+      }
+
+      // Initialize the app
+      window.onload = function () {
+        loadWords();
+        showScreen("home");
+      };
+    </script>
+  </body>
+</html>
