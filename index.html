@@ -782,13 +782,13 @@
     <script>
       // Words database with pronunciation and categories
       const words = [
-    // Adverbs of frequency
+    // --- Adverbs of frequency (Rishlik Ravishlari) ---
     {en:"always", pron:"ˈɔːlweɪz", uz:"har doim", category:"adverbs"},
     {en:"usually", pron:"ˈjuːʒuəli", uz:"odatda", category:"adverbs"},
     {en:"sometimes", pron:"ˈsʌmtaɪmz", uz:"ba'zan", category:"adverbs"},
     {en:"never", pron:"ˈnevər", uz:"hech qachon", category:"adverbs"},
 
-    // Daily routine
+    // --- Daily routine (Kundalik tartib) ---
     {en:"get up", pron:"get ʌp", uz:"uyg'onmoq, turmoq", category:"daily routine"},
     {en:"have a shower", pron:"hæv ə ˈʃaʊər", uz:"dush qilmoq", category:"daily routine"},
     {en:"have breakfast", pron:"hæv ˈbrekfəst", uz:"nonushta qilmoq", category:"daily routine"},
@@ -800,19 +800,24 @@
     {en:"do housework", pron:"duː ˈhaʊswɜːrk", uz:"uy ishlarini qilmoq", category:"daily routine"},
     {en:"watch TV", pron:"wɒtʃ ˌtiːˈviː", uz:"televizor ko'rmoq", category:"daily routine"},
     {en:"read a newspaper", pron:"riːd ə ˈnjuːzˌpeɪpər", uz:"gazeta o'qimoq", category:"daily routine"},
+    {en:"finish work", pron:"ˈfɪnɪʃ wɜːrk", uz:"ishni tugatmoq", category:"daily routine"},
+    {en:"go home", pron:"goʊ hoʊm", uz:"uyga bormoq", category:"daily routine"},
+    {en:"go shopping", pron:"goʊ ˈʃɒpɪŋ", uz:"do'konga bormoq / xarid qilmoq", category:"daily routine"},
+    {en:"have a bath", pron:"hæv ə bɑːθ", uz:"vanna qilmoq", category:"daily routine"},
+    {en:"make dinner", pron:"meɪk ˈdɪnər", uz:"kechki ovqat tayyorlamoq", category:"daily routine"},
 
-    // Time words
+    // --- Time words (Vaqt so'zlari) ---
     {en:"then", pron:"ðen", uz:"keyin", category:"time"},
     {en:"after", pron:"ˈæftər", uz:"…dan keyin", category:"time"},
     {en:"before", pron:"bɪˈfɔːr", uz:"…dan oldin", category:"time"},
     {en:"in the morning", pron:"ɪn ðə ˈmɔːrnɪŋ", uz:"ertalab", category:"time"},
-    {en:"in the afternoon", pron:"ɪn ðə ˌæftərˈnuːn", uz:"tushdan keyin", category:"time"},
+    {en:"in the afternoon", pron:"ɪn ði ˌæftərˈnuːn", uz:"tushdan keyin", category:"time"},
     {en:"in the evening", pron:"ɪn ði ˈiːvnɪŋ", uz:"kechqurun", category:"time"},
     {en:"at the weekend", pron:"æt ðə ˌwiːkˈend", uz:"hafta oxirida", category:"time"},
     {en:"until", pron:"ənˈtɪl", uz:"…gacha", category:"time"},
     {en:"at about", pron:"æt əˈbaʊt", uz:"taxminan", category:"time"},
 
-    // Lesson & reading vocabulary
+    // --- Lesson & reading vocabulary (Dars va o'qish lug'ati) ---
     {en:"hurry", pron:"ˈhʌri", uz:"shoshilmoq", category:"verbs"},
     {en:"towel", pron:"ˈtaʊəl", uz:"sochiq", category:"objects"},
     {en:"floor", pron:"flɔːr", uz:"pol", category:"objects"},
@@ -825,7 +830,7 @@
     {en:"hotel", pron:"hoʊˈtel", uz:"mehmonxona", category:"places"},
     {en:"hungry", pron:"ˈhʌŋɡri", uz:"och", category:"adjectives"},
 
-    // /j/ sound
+    // --- /j/ sound (Talaffuz so'zlari) ---
     {en:"yacht", pron:"jɒt", uz:"yaxta", category:"objects"},
     {en:"you", pron:"juː", uz:"sen", category:"pronouns"},
     {en:"your", pron:"jɔːr", uz:"sening", category:"pronouns"},
@@ -834,46 +839,152 @@
     {en:"beautiful", pron:"ˈbjuːtɪfəl", uz:"chiroyli", category:"adjectives"},
     {en:"student", pron:"ˈstjuːdənt", uz:"talaba", category:"people"},
 
-    // A Typical Day – qo'shimcha so'zlar
+    // --- Family Members (Oila A'zolari) ---
+    {en:"mother", pron:"ˈmʌðər", uz:"ona", category:"family members"},
+    {en:"mom", pron:"mɒm", uz:"oyi", category:"family members"},
+    {en:"father", pron:"ˈfɑːðər", uz:"ota", category:"family members"},
+    {en:"mother-in-law", pron:"ˈmʌðər ɪn lɔː", uz:"qaynona", category:"family members"},
+    {en:"father-in-law", pron:"ˈfɑːðər ɪn lɔː", uz:"qaynota", category:"family members"},
+    {en:"partner", pron:"ˈpɑːrtnər", uz:"juft / sherik", category:"family members"},
+    {en:"dad", pron:"dæd", uz:"dada", category:"family members"},
+    {en:"parent", pron:"ˈpeərənt", uz:"ota-ona", category:"family members"},
+    {en:"children", pron:"ˈtʃɪldrən", uz:"bolalar", category:"family members"},
+    {en:"uncle", pron:"ˈʌŋkl", uz:"tog'a / amaki", category:"family members"},
+    {en:"niece", pron:"niːs", uz:"jiyan qiz", category:"family members"},
+    {en:"nephew", pron:"ˈnefjuː", uz:"jiyan o'g'il", category:"family members"},
+    {en:"grandson", pron:"ˈɡrænsʌn", uz:"nabira o'g'il", category:"family members"},
+    {en:"granddaughter", pron:"ˈɡrændɔːtər", uz:"nabira qiz", category:"family members"},
+    {en:"grandchild", pron:"ˈɡræntʃaɪld", uz:"nabira", category:"family members"},
+    {en:"sister-in-law", pron:"ˈsɪstər ɪn lɔː", uz:"qaynsingil / kelin", category:"family members"},
+    {en:"brother-in-law", pron:"ˈbrʌðər ɪn lɔː", uz:"qaynaka / quda", category:"family members"},
+    {en:"stepmother", pron:"ˈstepˌmʌðər", uz:"o'gay ona", category:"family members"},
+    {en:"stepfather", pron:"ˈstepˌfɑːðər", uz:"o'gay ota", category:"family members"},
+    {en:"aunt", pron:"ɑːnt", uz:"xola / amma", category:"family members"},
+    {en:"cousin", pron:"ˈkʌzn", uz:"jiyan / qarindosh", category:"family members"},
+    {en:"husband", pron:"ˈhʌzbənd", uz:"er", category:"family members"},
+    {en:"wife", pron:"waɪf", uz:"xotin / turmush o'rtog'i", category:"family members"},
+    {en:"ex", pron:"eks", uz:"sobiq turmush o'rtog'i", category:"family members"},
+    {en:"son", pron:"sʌn", uz:"o'g'il", category:"family members"},
+    {en:"daughter", pron:"ˈdɔːtər", uz:"qiz", category:"family members"},
+    {en:"sister", pron:"ˈsɪstər", uz:"opa-singil", category:"family members"},
+    {en:"brother", pron:"ˈbrʌðər", uz:"aka-uka", category:"family members"},
+    {en:"grandmother", pron:"ˈɡrænˌmʌðər", uz:"buvi", category:"family members"},
+    {en:"grandfather", pron:"ˈɡrænˌfɑːðər", uz:"bobo", category:"family members"},
+    {en:"grandparent", pron:"ˈɡrænˌpeərənt", uz:"keksalar / bobo-buvi", category:"family members"},
+    
+    // --- Question Words (So'roq So'zlari) ---
+    {en:"what", pron:"wɒt", uz:"Nima? / Qanday?", category:"question words"},
+    {en:"who", pron:"huː", uz:"Kim?", category:"question words"},
+    {en:"where", pron:"weər", uz:"Qayerda? / Qaerga?", category:"question words"},
+    {en:"when", pron:"wen", uz:"Qachon?", category:"question words"},
+    {en:"why", pron:"waɪ", uz:"Nima uchun? / Nega?", category:"question words"},
+    {en:"which", pron:"wɪtʃ", uz:"Qaysi?", category:"question words"},
+    {en:"whose", pron:"huːz", uz:"Kimniki?", category:"question words"},
+    {en:"whom", pron:"huːm", uz:"Kimni? / Kimga?", category:"question words"},
+    {en:"how", pron:"haʊ", uz:"Qanday? / Qanchalik?", category:"question words"},
+
+    // --- Adverbs of frequency (Rishlik Ravishlari) ---
+    {en:"always", pron:"ˈɔːlweɪz", uz:"har doim", category:"adverbs"},
+    {en:"usually", pron:"ˈjuːʒuəli", uz:"odatda", category:"adverbs"},
+    {en:"sometimes", pron:"ˈsʌmtaɪmz", uz:"ba'zan", category:"adverbs"},
+    {en:"never", pron:"ˈnevər", uz:"hech qachon", category:"adverbs"},
+
+    // --- Daily routine (Kundalik tartib) ---
+    {en:"get up", pron:"get ʌp", uz:"uyg'onmoq, turmoq", category:"daily routine"},
+    {en:"have a shower", pron:"hæv ə ˈʃaʊər", uz:"dush qilmoq", category:"daily routine"},
+    {en:"have breakfast", pron:"hæv ˈbrekfəst", uz:"nonushta qilmoq", category:"daily routine"},
+    {en:"go to work", pron:"goʊ tu wɜːrk", uz:"ishga bormoq", category:"daily routine"},
+    {en:"go to school", pron:"goʊ tu skuːl", uz:"maktabga bormoq", category:"daily routine"},
+    {en:"have lunch", pron:"hæv lʌntʃ", uz:"tushlik qilmoq", category:"daily routine"},
+    {en:"have dinner", pron:"hæv ˈdɪnər", uz:"kechki ovqat qilmoq", category:"daily routine"},
+    {en:"go to bed", pron:"goʊ tu bed", uz:"uxlashga yotmoq", category:"daily routine"},
+    {en:"do housework", pron:"duː ˈhaʊswɜːrk", uz:"uy ishlarini qilmoq", category:"daily routine"},
+    {en:"watch TV", pron:"wɒtʃ ˌtiːˈviː", uz:"televizor ko'rmoq", category:"daily routine"},
+    {en:"read a newspaper", pron:"riːd ə ˈnjuːzˌpeɪpər", uz:"gazeta o'qimoq", category:"daily routine"},
     {en:"finish work", pron:"ˈfɪnɪʃ wɜːrk", uz:"ishni tugatmoq", category:"daily routine"},
     {en:"go home", pron:"goʊ hoʊm", uz:"uyga bormoq", category:"daily routine"},
     {en:"go shopping", pron:"goʊ ˈʃɒpɪŋ", uz:"do'konga bormoq / xarid qilmoq", category:"daily routine"},
     {en:"have a bath", pron:"hæv ə bɑːθ", uz:"vanna qilmoq", category:"daily routine"},
     {en:"make dinner", pron:"meɪk ˈdɪnər", uz:"kechki ovqat tayyorlamoq", category:"daily routine"},
 
-    // Family Members — Oila A'zolari (Qo'shilgan so'zlar)
-    {en:"mother", pron:"", uz:"ona", category:"family members"},
-    {en:"mom", pron:"", uz:"oyi", category:"family members"},
-    {en:"father", pron:"", uz:"ota", category:"family members"},
-    {en:"mother-in-law", pron:"", uz:"qaynona", category:"family members"},
-    {en:"father-in-law", pron:"", uz:"qaynota", category:"family members"},
-    {en:"partner", pron:"", uz:"juft / sherik", category:"family members"},
-    {en:"dad", pron:"", uz:"dada", category:"family members"},
-    {en:"parent", pron:"", uz:"ota-ona", category:"family members"},
-    {en:"children", pron:"", uz:"bolalar", category:"family members"},
-    {en:"uncle", pron:"", uz:"tog'a / amaki", category:"family members"},
-    {en:"niece", pron:"", uz:"jiyan qiz", category:"family members"},
-    {en:"nephew", pron:"", uz:"jiyan o'g'il", category:"family members"},
-    {en:"grandson", pron:"", uz:"nabira o'g'il", category:"family members"},
-    {en:"granddaughter", pron:"", uz:"nabira qiz", category:"family members"},
-    {en:"grandchild", pron:"", uz:"nabira", category:"family members"},
-    {en:"sister-in-law", pron:"", uz:"qaynsingil / kelin", category:"family members"},
-    {en:"brother-in-law", pron:"", uz:"qaynaka / quda", category:"family members"},
-    {en:"stepmother", pron:"", uz:"o'gay ona", category:"family members"},
-    {en:"stepfather", pron:"", uz:"o'gay ota", category:"family members"},
-    {en:"aunt", pron:"", uz:"xola / amma", category:"family members"},
-    {en:"cousin", pron:"", uz:"jiyan / qarindosh", category:"family members"},
-    {en:"husband", pron:"", uz:"er", category:"family members"},
-    {en:"wife", pron:"", uz:"xotin / turmush o'rtog'i", category:"family members"},
-    {en:"ex", pron:"", uz:"sobiq turmush o'rtog'i", category:"family members"},
-    {en:"son", pron:"", uz:"o'g'il", category:"family members"},
-    {en:"daughter", pron:"", uz:"qiz", category:"family members"},
-    {en:"sister", pron:"", uz:"opa-singil", category:"family members"},
-    {en:"brother", pron:"", uz:"aka-uka", category:"family members"},
-    {en:"grandmother", pron:"", uz:"buvi", category:"family members"},
-    {en:"grandfather", pron:"", uz:"bobo", category:"family members"},
-    {en:"grandparent", pron:"", uz:"keksalar / bobo-buvi", category:"family members"}
+    // --- Time words (Vaqt so'zlari) ---
+    {en:"then", pron:"ðen", uz:"keyin", category:"time"},
+    {en:"after", pron:"ˈæftər", uz:"…dan keyin", category:"time"},
+    {en:"before", pron:"bɪˈfɔːr", uz:"…dan oldin", category:"time"},
+    {en:"in the morning", pron:"ɪn ðə ˈmɔːrnɪŋ", uz:"ertalab", category:"time"},
+    {en:"in the afternoon", pron:"ɪn ði ˌæftərˈnuːn", uz:"tushdan keyin", category:"time"},
+    {en:"in the evening", pron:"ɪn ði ˈiːvnɪŋ", uz:"kechqurun", category:"time"},
+    {en:"at the weekend", pron:"æt ðə ˌwiːkˈend", uz:"hafta oxirida", category:"time"},
+    {en:"until", pron:"ənˈtɪl", uz:"…gacha", category:"time"},
+    {en:"at about", pron:"æt əˈbaʊt", uz:"taxminan", category:"time"},
+
+    // --- Lesson & reading vocabulary (Dars va o'qish lug'ati) ---
+    {en:"hurry", pron:"ˈhʌri", uz:"shoshilmoq", category:"verbs"},
+    {en:"towel", pron:"ˈtaʊəl", uz:"sochiq", category:"objects"},
+    {en:"floor", pron:"flɔːr", uz:"pol", category:"objects"},
+    {en:"clothes", pron:"kloʊðz", uz:"kiyimlar", category:"objects"},
+    {en:"steak", pron:"steɪk", uz:"bifshteks, go'sht bo'lagi", category:"food"},
+    {en:"ballet", pron:"bæˈleɪ", uz:"balet", category:"arts"},
+    {en:"ballet dancer", pron:"ˈbæleɪ ˌdænsər", uz:"balet raqqosi", category:"arts"},
+    {en:"sleep", pron:"sliːp", uz:"uyqu, uxlash", category:"verbs"},
+    {en:"practise", pron:"ˈpræktɪs", uz:"mashq qilmoq", category:"verbs"},
+    {en:"hotel", pron:"hoʊˈtel", uz:"mehmonxona", category:"places"},
+    {en:"hungry", pron:"ˈhʌŋɡri", uz:"och", category:"adjectives"},
+
+    // --- /j/ sound (Talaffuz so'zlari) ---
+    {en:"yacht", pron:"jɒt", uz:"yaxta", category:"objects"},
+    {en:"you", pron:"juː", uz:"sen", category:"pronouns"},
+    {en:"your", pron:"jɔːr", uz:"sening", category:"pronouns"},
+    {en:"yes", pron:"jes", uz:"ha", category:"interjections"},
+    {en:"music", pron:"ˈmjuːzɪk", uz:"musiqa", category:"arts"},
+    {en:"beautiful", pron:"ˈbjuːtɪfəl", uz:"chiroyli", category:"adjectives"},
+    {en:"student", pron:"ˈstjuːdənt", uz:"talaba", category:"people"},
+
+    // --- Family Members (Oila A'zolari) ---
+    {en:"mother", pron:"ˈmʌðər", uz:"ona", category:"family members"},
+    {en:"mom", pron:"mɒm", uz:"oyi", category:"family members"},
+    {en:"father", pron:"ˈfɑːðər", uz:"ota", category:"family members"},
+    {en:"mother-in-law", pron:"ˈmʌðər ɪn lɔː", uz:"qaynona", category:"family members"},
+    {en:"father-in-law", pron:"ˈfɑːðər ɪn lɔː", uz:"qaynota", category:"family members"},
+    {en:"partner", pron:"ˈpɑːrtnər", uz:"juft / sherik", category:"family members"},
+    {en:"dad", pron:"dæd", uz:"dada", category:"family members"},
+    {en:"parent", pron:"ˈpeərənt", uz:"ota-ona", category:"family members"},
+    {en:"children", pron:"ˈtʃɪldrən", uz:"bolalar", category:"family members"},
+    {en:"uncle", pron:"ˈʌŋkl", uz:"tog'a / amaki", category:"family members"},
+    {en:"niece", pron:"niːs", uz:"jiyan qiz", category:"family members"},
+    {en:"nephew", pron:"ˈnefjuː", uz:"jiyan o'g'il", category:"family members"},
+    {en:"grandson", pron:"ˈɡrænsʌn", uz:"nabira o'g'il", category:"family members"},
+    {en:"granddaughter", pron:"ˈɡrændɔːtər", uz:"nabira qiz", category:"family members"},
+    {en:"grandchild", pron:"ˈɡræntʃaɪld", uz:"nabira", category:"family members"},
+    {en:"sister-in-law", pron:"ˈsɪstər ɪn lɔː", uz:"qaynsingil / kelin", category:"family members"},
+    {en:"brother-in-law", pron:"ˈbrʌðər ɪn lɔː", uz:"qaynaka / quda", category:"family members"},
+    {en:"stepmother", pron:"ˈstepˌmʌðər", uz:"o'gay ona", category:"family members"},
+    {en:"stepfather", pron:"ˈstepˌfɑːðər", uz:"o'gay ota", category:"family members"},
+    {en:"aunt", pron:"ɑːnt", uz:"xola / amma", category:"family members"},
+    {en:"cousin", pron:"ˈkʌzn", uz:"jiyan / qarindosh", category:"family members"},
+    {en:"husband", pron:"ˈhʌzbənd", uz:"er", category:"family members"},
+    {en:"wife", pron:"waɪf", uz:"xotin / turmush o'rtog'i", category:"family members"},
+    {en:"ex", pron:"eks", uz:"sobiq turmush o'rtog'i", category:"family members"},
+    {en:"son", pron:"sʌn", uz:"o'g'il", category:"family members"},
+    {en:"daughter", pron:"ˈdɔːtər", uz:"qiz", category:"family members"},
+    {en:"sister", pron:"ˈsɪstər", uz:"opa-singil", category:"family members"},
+    {en:"brother", pron:"ˈbrʌðər", uz:"aka-uka", category:"family members"},
+    {en:"grandmother", pron:"ˈɡrænˌmʌðər", uz:"buvi", category:"family members"},
+    {en:"grandfather", pron:"ˈɡrænˌfɑːðər", uz:"bobo", category:"family members"},
+    {en:"grandparent", pron:"ˈɡrænˌpeərənt", uz:"keksalar / bobo-buvi", category:"family members"},
+    
+    // --- Question Words (So'roq So'zlari) ---
+    {en:"what", pron:"wɒt", uz:"Nima? / Qanday?", category:"question words"},
+    {en:"who", pron:"huː", uz:"Kim?", category:"question words"},
+    {en:"where", pron:"weər", uz:"Qayerda? / Qaerga?", category:"question words"},
+    {en:"when", pron:"wen", uz:"Qachon?", category:"question words"},
+    {en:"why", pron:"waɪ", uz:"Nima uchun? / Nega?", category:"question words"},
+    {en:"which", pron:"wɪtʃ", uz:"Qaysi?", category:"question words"},
+    {en:"whose", pron:"huːz", uz:"Kimniki?", category:"question words"},
+    {en:"whom", pron:"huːm", uz:"Kimni? / Kimga?", category:"question words"},
+    {en:"how", pron:"haʊ", uz:"Qanday? / Qanchalik?", category:"question words"}
 ];
+
 
       // App state
       let currentWord = null;
