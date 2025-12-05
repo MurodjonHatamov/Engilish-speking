@@ -96,10 +96,6 @@
         background: rgba(106, 158, 255, 0.2);
         color: #6a9eff;
       }
-      body.dark-theme .next-btn:not(.active) {
-        background: #444;
-        color: #888;
-      }
 
       header {
         background: linear-gradient(135deg, #4a6cf7, #6a11cb);
@@ -789,13 +785,13 @@
         <div class="content" style="padding: 0">
           <div class="speaking-center">
             <div class="uz-word" id="uzWord">Tap the microphone to start</div>
+            <div class="result" id="speakingResult"></div>
             <button class="hint-btn" onclick="giveHint()">
               <i class="fas fa-volume-up"></i>
             </button>
             <button class="mic-btn" id="micButton">
               <i class="fas fa-microphone"></i>
             </button>
-            <div class="result" id="speakingResult"></div>
             <button class="next-btn" id="nextWordButton" onclick="nextSpeakingWord()" style="display: none;">
               Next Word →
             </button>
@@ -1151,17 +1147,14 @@
         loadWords();
       }
 
-      // Voice function - TO'G'IRLANGAN
+      // Voice function
       function speakWord(text) {
-        // Avval barcha speech to'xtatiladi
         speechSynthesis.cancel();
         
-        // Kichik kechikish qo'shamiz
         setTimeout(() => {
           const utterance = new SpeechSynthesisUtterance(text);
           utterance.lang = "en-US";
 
-          // Ovoz sozlamalari
           switch (appSettings.voice) {
             case "male":
               utterance.rate = 0.9;
@@ -1181,12 +1174,6 @@
           }
 
           utterance.volume = 1.0;
-          
-          // Xatolarni ushlash
-          utterance.onerror = function(event) {
-            console.log("Speech synthesis error:", event);
-          };
-          
           speechSynthesis.speak(utterance);
         }, 100);
       }
@@ -1194,16 +1181,12 @@
       function changeVoice(voice) {
         appSettings.voice = voice;
         
-        // Barcha voice tugmalarini yangilash
         document.querySelectorAll(".voice-btn").forEach((btn) => {
           btn.classList.remove("active");
           if (btn.textContent.toLowerCase().includes(voice)) {
             btn.classList.add("active");
           }
         });
-        
-        // Test uchun ovoz chiqaramiz
-        speakWord("Test voice");
       }
 
       // Quiz functionality
@@ -1270,7 +1253,6 @@
           element.classList.add("correct");
           document.getElementById("feedback").textContent = "Correct!";
           document.getElementById("feedback").style.color = "#28a745";
-          // TO'G'RI JAVOBDA OVOZ CHIQARISH
           speakWord(correctAnswer);
         } else {
           element.classList.add("wrong");
@@ -1280,7 +1262,6 @@
           document.getElementById("feedback").textContent = `Correct: ${correctTranslation}`;
           document.getElementById("feedback").style.color = "#dc3545";
           
-          // To'g'ri javobni ko'rsatish
           document.querySelectorAll(".opt").forEach((opt) => {
             const optText = opt.textContent.trim();
             const correctOptText = isEnglishToUzbek
@@ -1292,18 +1273,18 @@
           });
         }
 
-        // Boshqa variantlarni block qilish
         document.querySelectorAll(".opt").forEach((opt) => {
           opt.style.pointerEvents = "none";
         });
 
-        // Next tugmasini ko'rsatish
         document.getElementById("nextButton").style.display = "block";
-
         document.getElementById("quizProgress").style.width = `${(quizTotal / 10) * 100}%`;
       }
 
-      // Speaking practice
+      // Speaking practice - TO'G'IRLANGAN
+      let currentSpeakingWords = [];
+      let speakingIndex = 0;
+
       function nextSpeakingWord() {
         const filteredWords = appSettings.speakingCategory === "all" 
           ? words 
@@ -1316,16 +1297,19 @@
           return;
         }
 
+        // Yangi so'z tanlash
         currentWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
 
         document.getElementById("uzWord").textContent = currentWord.uz;
-        document.getElementById("speakingResult").textContent = "";
+        document.getElementById("speakingResult").textContent = "Tap microphone and say the word";
         document.getElementById("speakingResult").style.color = "#333";
         document.getElementById("micButton").classList.remove("listening");
         document.getElementById("nextWordButton").style.display = "none";
 
         if (recognition) {
-          recognition.stop();
+          try {
+            recognition.stop();
+          } catch (e) {}
         }
         isListening = false;
       }
@@ -1347,8 +1331,7 @@
 
       function startListening() {
         if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-          document.getElementById("speakingResult").textContent = "Speech recognition not supported";
-          document.getElementById("speakingResult").style.color = "#dc3545";
+          alert("Speech recognition is not supported in your browser. Please use Chrome or Edge.");
           return;
         }
 
@@ -1357,7 +1340,7 @@
         recognition.lang = "en-US";
         recognition.continuous = false;
         recognition.interimResults = false;
-        recognition.maxAlternatives = 3;
+        recognition.maxAlternatives = 1;
 
         recognition.onstart = function () {
           isListening = true;
@@ -1367,35 +1350,58 @@
         };
 
         recognition.onresult = function (event) {
-          const result = event.results[0];
-          let bestMatch = "";
-          let confidence = 0;
-
-          // Eng yaxshi natijani tanlash
-          for (let i = 0; i < result.length; i++) {
-            const spokenText = result[i].transcript.trim().toLowerCase();
-            const currentConfidence = result[i].confidence;
-
-            if (currentConfidence > confidence) {
-              confidence = currentConfidence;
-              bestMatch = spokenText;
+          const result = event.results[0][0];
+          const spokenText = result.transcript.trim().toLowerCase();
+          const correctAnswer = currentWord.en.toLowerCase();
+          
+          console.log("Spoken:", spokenText);
+          console.log("Correct:", correctAnswer);
+          
+          // Kengaytirilgan tekshirish
+          let isCorrect = false;
+          
+          // 1. Aniq mos kelish
+          if (spokenText === correctAnswer) {
+            isCorrect = true;
+          }
+          // 2. Harflarni almashtirish (e.g., "wat" for "what")
+          else if (levenshteinDistance(spokenText, correctAnswer) <= 2) {
+            isCorrect = true;
+          }
+          // 3. So'zlar bo'yicha tekshirish
+          else {
+            const spokenWords = spokenText.split(/\s+/);
+            const correctWords = correctAnswer.split(/\s+/);
+            
+            if (spokenWords.length === correctWords.length) {
+              let matchCount = 0;
+              for (let i = 0; i < spokenWords.length; i++) {
+                if (levenshteinDistance(spokenWords[i], correctWords[i]) <= 1) {
+                  matchCount++;
+                }
+              }
+              isCorrect = matchCount / correctWords.length >= 0.8;
             }
           }
 
-          const correctAnswer = currentWord.en.toLowerCase();
-          const isCorrect = checkAnswerMatch(bestMatch, correctAnswer);
-
-          document.getElementById("speakingResult").style.color = isCorrect ? "#28a745" : "#dc3545";
-          document.getElementById("speakingResult").textContent = isCorrect
-            ? "✅ Correct! Well done!"
-            : `❌ Try again. You said: "${bestMatch}"`;
-
           if (isCorrect) {
+            document.getElementById("speakingResult").textContent = "✅ Perfect! Correct pronunciation!";
+            document.getElementById("speakingResult").style.color = "#28a745";
             speakWord("Excellent!");
-            document.getElementById("nextWordButton").style.display = "block";
-            // 2 sekunddan keyin avtomatik keyingi so'zga o'tish
+            
+            // 2 sekunddan keyin yangi so'z
             setTimeout(() => {
               nextSpeakingWord();
+            }, 2000);
+          } else {
+            document.getElementById("speakingResult").textContent = `❌ Try again. You said: "${spokenText}"`;
+            document.getElementById("speakingResult").style.color = "#dc3545";
+            
+            // Qayta urinish uchun ruxsat
+            setTimeout(() => {
+              document.getElementById("speakingResult").textContent = "Try again. Tap microphone";
+              isListening = false;
+              document.getElementById("micButton").classList.remove("listening");
             }, 2000);
           }
         };
@@ -1409,7 +1415,7 @@
           } else if (event.error === "not-allowed") {
             document.getElementById("speakingResult").textContent = "Microphone permission denied.";
           } else {
-            document.getElementById("speakingResult").textContent = "Error: " + event.error;
+            document.getElementById("speakingResult").textContent = "Error occurred. Try again.";
           }
           document.getElementById("speakingResult").style.color = "#dc3545";
           stopListening();
@@ -1422,39 +1428,44 @@
         try {
           recognition.start();
         } catch (error) {
+          console.log("Recognition start error:", error);
           document.getElementById("speakingResult").textContent = "Error starting recognition";
           document.getElementById("speakingResult").style.color = "#dc3545";
+          isListening = false;
+          document.getElementById("micButton").classList.remove("listening");
         }
       }
 
-      function checkAnswerMatch(spoken, correct) {
-        spoken = spoken.replace(/\s+/g, " ").trim().toLowerCase();
-        correct = correct.replace(/\s+/g, " ").trim().toLowerCase();
-        
-        // Aniq mos kelish
-        if (spoken === correct) return true;
-        
-        // Qisman mos kelish
-        if (spoken.includes(correct) || correct.includes(spoken)) return true;
-        
-        // So'zlar bo'yicha tekshirish
-        const spokenWords = spoken.split(" ");
-        const correctWords = correct.split(" ");
-        
-        let matchCount = 0;
-        for (let spokenWord of spokenWords) {
-          for (let correctWord of correctWords) {
-            if (spokenWord === correctWord || 
-                spokenWord.includes(correctWord) || 
-                correctWord.includes(spokenWord)) {
-              matchCount++;
-              break;
+      // Levenshtein distance for better matching
+      function levenshteinDistance(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+
+        const matrix = [];
+
+        for (let i = 0; i <= b.length; i++) {
+          matrix[i] = [i];
+        }
+
+        for (let j = 0; j <= a.length; j++) {
+          matrix[0][j] = j;
+        }
+
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+              matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+              matrix[i][j] = Math.min(
+                matrix[i - 1][j - 1] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j] + 1
+              );
             }
           }
         }
-        
-        // Kamida 70% mos kelishi kerak
-        return matchCount / correctWords.length >= 0.7;
+
+        return matrix[b.length][a.length];
       }
 
       function stopListening() {
@@ -1467,11 +1478,10 @@
         document.getElementById("micButton").classList.remove("listening");
       }
 
-      // Settings functions - TO'G'IRLANGAN
+      // Settings functions
       function changeTheme(theme) {
         appSettings.theme = theme;
         
-        // Tugmalarni yangilash
         document.querySelectorAll(".theme-btn").forEach((btn) => {
           btn.classList.remove("active");
           if (btn.textContent.toLowerCase().includes(theme)) {
@@ -1491,27 +1501,22 @@
       function changeColor(color) {
         appSettings.color = color;
         
-        // Faol rangni yangilash
         document.querySelectorAll(".color-option").forEach((opt) => opt.classList.remove("active"));
         event.target.classList.add("active");
 
-        // Header rangini yangilash
         const darkColor = darkenColor(color, 20);
         document.querySelectorAll("header").forEach((header) => {
           header.style.background = `linear-gradient(135deg, ${color}, ${darkColor})`;
         });
         
-        // Boshqa elementlar rangini yangilash
         document.querySelectorAll(".speak-btn, .home-btn, .next-btn, .hint-btn, .mic-btn").forEach((btn) => {
           btn.style.background = color;
         });
         
-        // Border ranglarini yangilash
         document.querySelectorAll(".word-card, .voice-panel, .settings-item, .progress-bar").forEach((el) => {
           el.style.borderLeftColor = color;
         });
         
-        // Active tugmalar rangini yangilash
         document.querySelectorAll(".voice-btn.active, .theme-btn.active, .category-btn.active").forEach((btn) => {
           btn.style.background = color;
           btn.style.borderColor = color;
@@ -1535,11 +1540,6 @@
       // Initialize the app
       window.onload = function () {
         loadWords();
-        
-        // Ovoz tanlashni test qilish
-        setTimeout(() => {
-          speakWord("Welcome to English Learner");
-        }, 1000);
       };
     </script>
   </body>
