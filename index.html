@@ -38,59 +38,67 @@
       }
 
       /* Dark Theme */
-      .dark-theme {
+      body.dark-theme {
         background: #121212;
       }
-      .dark-theme .app {
+      body.dark-theme .app {
         background: #1e1e1e;
         color: #ffffff;
       }
-      .dark-theme .content {
+      body.dark-theme .content {
         background: #121212;
         color: #ffffff;
       }
-      .dark-theme .word-card,
-      .dark-theme .voice-panel,
-      .dark-theme .settings-item,
-      .dark-theme .question,
-      .dark-theme .uz-word,
-      .dark-theme .result,
-      .dark-theme .opt {
+      body.dark-theme .word-card,
+      body.dark-theme .voice-panel,
+      body.dark-theme .settings-item,
+      body.dark-theme .question,
+      body.dark-theme .uz-word,
+      body.dark-theme .result,
+      body.dark-theme .opt {
         background: #2d2d2d;
         color: #ffffff;
         border-color: #444;
       }
-      .dark-theme .en {
+      body.dark-theme .en {
         color: #6a9eff;
       }
-      .dark-theme .uz {
+      body.dark-theme .uz {
         color: #cccccc;
       }
-      .dark-theme .pron {
+      body.dark-theme .pron {
         background: rgba(106, 158, 255, 0.1);
         color: #aaaaaa;
       }
-      .dark-theme .category-btn,
-      .dark-theme .voice-btn,
-      .dark-theme .theme-btn,
-      .dark-theme .opt {
+      body.dark-theme .category-btn,
+      body.dark-theme .voice-btn,
+      body.dark-theme .theme-btn,
+      body.dark-theme .opt {
         background: #2d2d2d;
         color: #ffffff;
         border-color: #444;
       }
-      .dark-theme .category-btn.active,
-      .dark-theme .voice-btn.active,
-      .dark-theme .theme-btn.active {
+      body.dark-theme .category-btn.active,
+      body.dark-theme .voice-btn.active,
+      body.dark-theme .theme-btn.active {
         background: #4a6cf7;
         color: white;
         border-color: #4a6cf7;
       }
-      .dark-theme .score {
+      body.dark-theme .score {
         background: #2d3748;
         color: #90cdf4;
       }
-      .dark-theme .progress {
+      body.dark-theme .progress {
         background: #2d2d2d;
+      }
+      body.dark-theme .word-counter {
+        background: rgba(106, 158, 255, 0.2);
+        color: #6a9eff;
+      }
+      body.dark-theme .next-btn:not(.active) {
+        background: #444;
+        color: #888;
       }
 
       header {
@@ -178,25 +186,6 @@
         -webkit-overflow-scrolling: touch;
         padding: 15px;
         background: #f8f9ff;
-      }
-
-      /* Custom Scrollbar Styles */
-      .content::-webkit-scrollbar {
-        width: 6px;
-      }
-      .content::-webkit-scrollbar-track {
-        background: rgba(74, 108, 247, 0.1);
-        border-radius: 10px;
-        margin: 5px;
-      }
-      .content::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
-        border-radius: 10px;
-        border: 2px solid #f8f9ff;
-      }
-      .dark-theme .content::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
-        border-color: #121212;
       }
 
       /* Word Memorization */
@@ -430,7 +419,8 @@
         width: 100%;
         word-break: break-word;
       }
-      .speaking-categories {
+      .speaking-categories,
+      .quiz-categories {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
@@ -506,10 +496,20 @@
         background: #d4edda;
         color: #155724;
       }
+      body.dark-theme .opt.correct {
+        border-color: #28a745;
+        background: #155724;
+        color: #d4edda;
+      }
       .opt.wrong {
         border-color: #dc3545;
         background: #f8d7da;
         color: #721c24;
+      }
+      body.dark-theme .opt.wrong {
+        border-color: #dc3545;
+        background: #721c24;
+        color: #f8d7da;
       }
       .next-btn {
         margin: 25px auto;
@@ -522,23 +522,15 @@
         cursor: pointer;
         display: block;
         box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
-        opacity: 0.3;
+        opacity: 1;
         transition: all 0.3s;
-        pointer-events: none;
+        pointer-events: auto;
         touch-action: manipulation;
         min-height: 50px;
       }
       .next-btn.active {
         opacity: 1;
         pointer-events: auto;
-      }
-      .quiz-categories {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        padding: 15px;
-        margin-bottom: 10px;
-        justify-content: center;
       }
 
       /* Settings Screen */
@@ -558,6 +550,9 @@
         display: flex;
         align-items: center;
         gap: 10px;
+      }
+      body.dark-theme .settings-title {
+        color: #ffffff;
       }
       .settings-options {
         display: flex;
@@ -592,8 +587,61 @@
       .color-option.active {
         border-color: #333;
       }
-      .dark-theme .color-option.active {
+      body.dark-theme .color-option.active {
         border-color: #fff;
+      }
+
+      /* Category Selection Screen */
+      .category-selection {
+        display: none;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+      .category-selection.active {
+        display: flex;
+      }
+      .category-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 20px;
+      }
+      .category-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100px;
+      }
+      .category-card:hover {
+        transform: translateY(-5px);
+        border-color: #4a6cf7;
+      }
+      .category-icon {
+        font-size: 32px;
+        color: #4a6cf7;
+        margin-bottom: 10px;
+      }
+      .category-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+      body.dark-theme .category-card {
+        background: #2d2d2d;
+        border-color: #444;
+      }
+      body.dark-theme .category-name {
+        color: #fff;
       }
 
       /* Mobile optimizations */
@@ -640,11 +688,14 @@
           padding: 8px 12px;
           font-size: 12px;
         }
-      }
-
-      /* Button spacing for mobile */
-      .button-spacing {
-        margin-top: 40px;
+        .category-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .category-card {
+          min-height: 80px;
+          padding: 15px;
+        }
       }
     </style>
   </head>
@@ -654,18 +705,29 @@
       <div id="home" class="screen active">
         <header><h1>English Learner</h1></header>
         <div class="home">
-          <button class="home-btn" onclick="showScreen('memorize')">
+          <button class="home-btn" onclick="showCategorySelection('memorize')">
             <i class="fas fa-book-open"></i> Word Memorization
           </button>
-          <button class="home-btn" onclick="showScreen('quiz')">
+          <button class="home-btn" onclick="showCategorySelection('quiz')">
             <i class="fas fa-pencil-alt"></i> Practice Quiz
           </button>
-          <button class="home-btn" onclick="showScreen('speaking')">
+          <button class="home-btn" onclick="showCategorySelection('speaking')">
             <i class="fas fa-microphone"></i> Speaking Practice
           </button>
           <button class="home-btn" onclick="showScreen('settings')">
             <i class="fas fa-cog"></i> Settings
           </button>
+        </div>
+      </div>
+
+      <!-- Category Selection Screen -->
+      <div id="categorySelection" class="category-selection">
+        <header>
+          <button class="back-btn" onclick="showScreen('home')">←</button>
+          <h1 id="categoryTitle">Select Category</h1>
+        </header>
+        <div class="content">
+          <div class="category-grid" id="categoryGrid"></div>
         </div>
       </div>
 
@@ -711,13 +773,10 @@
           <div class="progress-bar" id="quizProgress" style="width: 0%"></div>
         </div>
         <div class="content">
-          <!-- Category Filter for Quiz -->
-          <div class="quiz-categories" id="quizCategories"></div>
-          
           <div class="question" id="questionText"></div>
           <div class="options" id="optionsContainer"></div>
           <div class="result" id="feedback"></div>
-          <button class="next-btn" id="nextButton">Next →</button>
+          <button class="next-btn" id="nextButton" onclick="nextQuestion()">Next →</button>
         </div>
       </div>
 
@@ -728,9 +787,6 @@
           <h1>Speaking Practice</h1>
         </header>
         <div class="content" style="padding: 0">
-          <!-- Category Filter for Speaking -->
-          <div class="speaking-categories" id="speakingCategories"></div>
-          
           <div class="speaking-center">
             <div class="uz-word" id="uzWord">Tap the microphone to start</div>
             <button class="hint-btn" onclick="giveHint()">
@@ -947,8 +1003,6 @@
   {en:"Help me.", pron:"", uz:"Menga yordam ber.", category:"imperative"}
 ];
 
-    
-
       // App state
       let currentWord = null;
       let quizScore = 0;
@@ -961,78 +1015,89 @@
         voice: "female",
         memorizationCategory: "all",
         quizCategory: "all",
-        speakingCategory: "all"
+        speakingCategory: "all",
+        nextScreen: null
       };
 
-      // Category name mapping
-      const categoryNames = {
-        'adverbs': 'Adverbs',
-        'daily routine': 'Daily Routine',
-        'time': 'Time Words',
-        'verbs': 'Verbs',
-        'objects': 'Objects',
-        'food': 'Food',
-        'arts': 'Arts',
-        'places': 'Places',
-        'adjectives': 'Adjectives',
-        'pronouns': 'Pronouns',
-        'interjections': 'Interjections',
-        'people': 'People',
-        'family members': 'Family Members',
-        'question words': 'Question Words'
+      // Category name mapping with icons
+      const categoryInfo = {
+        'all': { name: 'All Words', icon: 'fas fa-globe' },
+        'adverbs': { name: 'Adverbs', icon: 'fas fa-ad' },
+        'daily routine': { name: 'Daily Routine', icon: 'fas fa-calendar-day' },
+        'time': { name: 'Time Words', icon: 'fas fa-clock' },
+        'verbs': { name: 'Verbs', icon: 'fas fa-running' },
+        'objects': { name: 'Objects', icon: 'fas fa-cube' },
+        'food': { name: 'Food', icon: 'fas fa-utensils' },
+        'arts': { name: 'Arts', icon: 'fas fa-palette' },
+        'places': { name: 'Places', icon: 'fas fa-map-marker-alt' },
+        'adjectives': { name: 'Adjectives', icon: 'fas fa-font' },
+        'pronouns': { name: 'Pronouns', icon: 'fas fa-user' },
+        'interjections': { name: 'Interjections', icon: 'fas fa-exclamation' },
+        'people': { name: 'People', icon: 'fas fa-users' },
+        'family members': { name: 'Family Members', icon: 'fas fa-home' },
+        'question words': { name: 'Question Words', icon: 'fas fa-question' }
       };
 
       // Screen navigation
       function showScreen(screenId) {
-        document.querySelectorAll(".screen").forEach((screen) => {
+        document.querySelectorAll(".screen, .category-selection").forEach((screen) => {
           screen.classList.remove("active");
         });
 
-        document.getElementById(screenId).classList.add("active");
+        const screen = document.getElementById(screenId);
+        if (screen) {
+          screen.classList.add("active");
+        }
 
         if (screenId === "memorize") {
           loadWords();
         } else if (screenId === "quiz") {
-          initQuizCategories();
           resetQuiz();
           nextQuestion();
         } else if (screenId === "speaking") {
-          initSpeakingCategories();
           nextSpeakingWord();
         }
       }
 
-      // Category filter functions
-      function createCategoryFilter(containerId, currentCategory, categoryType) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+      // Category selection screen
+      function showCategorySelection(nextScreen) {
+        appSettings.nextScreen = nextScreen;
+        const title = document.getElementById("categoryTitle");
+        const grid = document.getElementById("categoryGrid");
         
+        if (nextScreen === "memorize") {
+          title.textContent = "Select Category for Memorization";
+        } else if (nextScreen === "quiz") {
+          title.textContent = "Select Category for Quiz";
+        } else if (nextScreen === "speaking") {
+          title.textContent = "Select Category for Speaking Practice";
+        }
+        
+        // Get unique categories
         const categories = ["all", ...new Set(words.map(word => word.category))];
         
-        container.innerHTML = categories.map(category => `
-          <button class="category-btn ${category === currentCategory ? 'active' : ''}" 
-                  onclick="changeCategory('${categoryType}', '${category}')">
-            ${category === 'all' ? 'All Words' : (categoryNames[category] || category)}
-          </button>
+        grid.innerHTML = categories.map(category => `
+          <div class="category-card" onclick="selectCategory('${category}')">
+            <div class="category-icon">
+              <i class="${categoryInfo[category]?.icon || 'fas fa-folder'}"></i>
+            </div>
+            <div class="category-name">${categoryInfo[category]?.name || category}</div>
+          </div>
         `).join('');
+        
+        showScreen("categorySelection");
       }
 
-      function changeCategory(type, category) {
-        appSettings[`${type}Category`] = category;
-        
-        // Update active button
-        const buttons = document.querySelectorAll(`#${type}Categories .category-btn`);
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        // Reload content based on type
-        if (type === 'memorization') {
-          loadWords();
-        } else if (type === 'quiz') {
-          resetQuiz();
-          nextQuestion();
-        } else if (type === 'speaking') {
-          nextSpeakingWord();
+      function selectCategory(category) {
+        if (appSettings.nextScreen === "memorize") {
+          appSettings.memorizationCategory = category;
+          showScreen("memorize");
+        } else if (appSettings.nextScreen === "quiz") {
+          appSettings.quizCategory = category;
+          showScreen("quiz");
+        } else if (appSettings.nextScreen === "speaking") {
+          appSettings.speakingCategory = category;
+          showScreen("speaking");
         }
       }
 
@@ -1040,9 +1105,18 @@
       function loadWords() {
         const wordList = document.getElementById("wordList");
         const wordCounter = document.getElementById("wordCounter");
+        const categoryFilter = document.getElementById("categoryFilter");
         
-        createCategoryFilter('categoryFilter', appSettings.memorizationCategory, 'memorization');
+        // Create category filter buttons
+        const categories = ["all", ...new Set(words.map(word => word.category))];
+        categoryFilter.innerHTML = categories.map(category => `
+          <button class="category-btn ${category === appSettings.memorizationCategory ? 'active' : ''}" 
+                  onclick="filterMemorization('${category}')">
+            ${category === 'all' ? 'All Words' : (categoryInfo[category]?.name || category)}
+          </button>
+        `).join('');
         
+        // Filter words by category
         const filteredWords = appSettings.memorizationCategory === "all" 
           ? words 
           : words.filter(word => word.category === appSettings.memorizationCategory);
@@ -1070,56 +1144,81 @@
         `).join('');
       }
 
-      // Voice function
+      function filterMemorization(category) {
+        appSettings.memorizationCategory = category;
+        document.querySelectorAll('#categoryFilter .category-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        loadWords();
+      }
+
+      // Voice function - TO'G'IRLANGAN
       function speakWord(text) {
+        // Avval barcha speech to'xtatiladi
         speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "en-US";
+        
+        // Kichik kechikish qo'shamiz
+        setTimeout(() => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "en-US";
 
-        switch (appSettings.voice) {
-          case "male":
-            utterance.rate = 0.9;
-            utterance.pitch = 0.7;
-            break;
-          case "child":
-            utterance.rate = 0.8;
-            utterance.pitch = 1.5;
-            break;
-          case "slow":
-            utterance.rate = 0.6;
-            utterance.pitch = 1.0;
-            break;
-          default: // female
-            utterance.rate = 0.9;
-            utterance.pitch = 1.2;
-        }
+          // Ovoz sozlamalari
+          switch (appSettings.voice) {
+            case "male":
+              utterance.rate = 0.9;
+              utterance.pitch = 0.7;
+              break;
+            case "child":
+              utterance.rate = 0.8;
+              utterance.pitch = 1.5;
+              break;
+            case "slow":
+              utterance.rate = 0.6;
+              utterance.pitch = 1.0;
+              break;
+            default: // female
+              utterance.rate = 0.9;
+              utterance.pitch = 1.2;
+          }
 
-        utterance.volume = 1.0;
-        speechSynthesis.speak(utterance);
+          utterance.volume = 1.0;
+          
+          // Xatolarni ushlash
+          utterance.onerror = function(event) {
+            console.log("Speech synthesis error:", event);
+          };
+          
+          speechSynthesis.speak(utterance);
+        }, 100);
       }
 
       function changeVoice(voice) {
         appSettings.voice = voice;
-        document.querySelectorAll(".voice-btn").forEach((btn) => btn.classList.remove("active"));
-        event.target.classList.add("active");
+        
+        // Barcha voice tugmalarini yangilash
+        document.querySelectorAll(".voice-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.textContent.toLowerCase().includes(voice)) {
+            btn.classList.add("active");
+          }
+        });
+        
+        // Test uchun ovoz chiqaramiz
+        speakWord("Test voice");
       }
 
       // Quiz functionality
-      function initQuizCategories() {
-        createCategoryFilter('quizCategories', appSettings.quizCategory, 'quiz');
-      }
-
       function resetQuiz() {
         quizScore = 0;
         quizTotal = 0;
         document.getElementById("scoreValue").textContent = "0";
         document.getElementById("totalValue").textContent = "0";
         document.getElementById("quizProgress").style.width = "0%";
+        document.getElementById("nextButton").style.display = "block";
       }
 
       function nextQuestion() {
         const nextButton = document.getElementById("nextButton");
-        nextButton.classList.remove("active");
+        nextButton.style.display = "none";
         document.getElementById("feedback").textContent = "";
         document.getElementById("feedback").style.color = "#333";
 
@@ -1171,15 +1270,17 @@
           element.classList.add("correct");
           document.getElementById("feedback").textContent = "Correct!";
           document.getElementById("feedback").style.color = "#28a745";
+          // TO'G'RI JAVOBDA OVOZ CHIQARISH
           speakWord(correctAnswer);
         } else {
           element.classList.add("wrong");
           const correctTranslation = isEnglishToUzbek
             ? words.find((w) => w.en === correctAnswer).uz
             : correctAnswer;
-          document.getElementById("feedback").textContent = correctTranslation;
+          document.getElementById("feedback").textContent = `Correct: ${correctTranslation}`;
           document.getElementById("feedback").style.color = "#dc3545";
           
+          // To'g'ri javobni ko'rsatish
           document.querySelectorAll(".opt").forEach((opt) => {
             const optText = opt.textContent.trim();
             const correctOptText = isEnglishToUzbek
@@ -1191,24 +1292,18 @@
           });
         }
 
+        // Boshqa variantlarni block qilish
         document.querySelectorAll(".opt").forEach((opt) => {
           opt.style.pointerEvents = "none";
         });
 
-        const nextButton = document.getElementById("nextButton");
-        nextButton.classList.add("active");
-        nextButton.onclick = function () {
-          nextQuestion();
-        };
+        // Next tugmasini ko'rsatish
+        document.getElementById("nextButton").style.display = "block";
 
         document.getElementById("quizProgress").style.width = `${(quizTotal / 10) * 100}%`;
       }
 
       // Speaking practice
-      function initSpeakingCategories() {
-        createCategoryFilter('speakingCategories', appSettings.speakingCategory, 'speaking');
-      }
-
       function nextSpeakingWord() {
         const filteredWords = appSettings.speakingCategory === "all" 
           ? words 
@@ -1241,7 +1336,7 @@
         }
       }
 
-      // Microphone functionality
+      // Microphone functionality - TO'G'IRLANGAN
       document.getElementById("micButton").addEventListener("click", function () {
         if (isListening) {
           stopListening();
@@ -1262,38 +1357,59 @@
         recognition.lang = "en-US";
         recognition.continuous = false;
         recognition.interimResults = false;
+        recognition.maxAlternatives = 3;
 
         recognition.onstart = function () {
           isListening = true;
           document.getElementById("micButton").classList.add("listening");
-          document.getElementById("speakingResult").textContent = "Listening...";
+          document.getElementById("speakingResult").textContent = "Listening... Speak now";
+          document.getElementById("speakingResult").style.color = "#333";
         };
 
         recognition.onresult = function (event) {
-          const result = event.results[0][0];
-          const spokenText = result.transcript.trim().toLowerCase();
-          const correctAnswer = currentWord.en.toLowerCase();
+          const result = event.results[0];
+          let bestMatch = "";
+          let confidence = 0;
 
-          const isCorrect = checkAnswerMatch(spokenText, correctAnswer);
-          
+          // Eng yaxshi natijani tanlash
+          for (let i = 0; i < result.length; i++) {
+            const spokenText = result[i].transcript.trim().toLowerCase();
+            const currentConfidence = result[i].confidence;
+
+            if (currentConfidence > confidence) {
+              confidence = currentConfidence;
+              bestMatch = spokenText;
+            }
+          }
+
+          const correctAnswer = currentWord.en.toLowerCase();
+          const isCorrect = checkAnswerMatch(bestMatch, correctAnswer);
+
           document.getElementById("speakingResult").style.color = isCorrect ? "#28a745" : "#dc3545";
           document.getElementById("speakingResult").textContent = isCorrect
             ? "✅ Correct! Well done!"
-            : `❌ You said: "${spokenText}"`;
+            : `❌ Try again. You said: "${bestMatch}"`;
 
           if (isCorrect) {
             speakWord("Excellent!");
             document.getElementById("nextWordButton").style.display = "block";
+            // 2 sekunddan keyin avtomatik keyingi so'zga o'tish
+            setTimeout(() => {
+              nextSpeakingWord();
+            }, 2000);
           }
         };
 
         recognition.onerror = function (event) {
+          console.log("Speech recognition error:", event.error);
           if (event.error === "no-speech") {
-            document.getElementById("speakingResult").textContent = "No speech detected";
+            document.getElementById("speakingResult").textContent = "No speech detected. Try again.";
           } else if (event.error === "audio-capture") {
-            document.getElementById("speakingResult").textContent = "No microphone";
+            document.getElementById("speakingResult").textContent = "No microphone found.";
           } else if (event.error === "not-allowed") {
-            document.getElementById("speakingResult").textContent = "Microphone permission denied";
+            document.getElementById("speakingResult").textContent = "Microphone permission denied.";
+          } else {
+            document.getElementById("speakingResult").textContent = "Error: " + event.error;
           }
           document.getElementById("speakingResult").style.color = "#dc3545";
           stopListening();
@@ -1312,27 +1428,33 @@
       }
 
       function checkAnswerMatch(spoken, correct) {
-        spoken = spoken.toLowerCase().replace(/\s+/g, " ").trim();
-        correct = correct.toLowerCase().replace(/\s+/g, " ").trim();
+        spoken = spoken.replace(/\s+/g, " ").trim().toLowerCase();
+        correct = correct.replace(/\s+/g, " ").trim().toLowerCase();
         
+        // Aniq mos kelish
         if (spoken === correct) return true;
+        
+        // Qisman mos kelish
         if (spoken.includes(correct) || correct.includes(spoken)) return true;
         
-        // Allow minor variations
+        // So'zlar bo'yicha tekshirish
         const spokenWords = spoken.split(" ");
         const correctWords = correct.split(" ");
         
-        if (spokenWords.length === correctWords.length) {
-          let matchCount = 0;
-          for (let i = 0; i < spokenWords.length; i++) {
-            if (spokenWords[i] === correctWords[i]) {
+        let matchCount = 0;
+        for (let spokenWord of spokenWords) {
+          for (let correctWord of correctWords) {
+            if (spokenWord === correctWord || 
+                spokenWord.includes(correctWord) || 
+                correctWord.includes(spokenWord)) {
               matchCount++;
+              break;
             }
           }
-          return matchCount / spokenWords.length >= 0.8;
         }
         
-        return false;
+        // Kamida 70% mos kelishi kerak
+        return matchCount / correctWords.length >= 0.7;
       }
 
       function stopListening() {
@@ -1345,34 +1467,51 @@
         document.getElementById("micButton").classList.remove("listening");
       }
 
-      // Settings functions
+      // Settings functions - TO'G'IRLANGAN
       function changeTheme(theme) {
         appSettings.theme = theme;
-        document.querySelectorAll(".theme-btn").forEach((btn) => btn.classList.remove("active"));
-        event.target.classList.add("active");
+        
+        // Tugmalarni yangilash
+        document.querySelectorAll(".theme-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.textContent.toLowerCase().includes(theme)) {
+            btn.classList.add("active");
+          }
+        });
 
         if (theme === "dark") {
           document.body.classList.add("dark-theme");
+          document.body.style.background = "#121212";
         } else {
           document.body.classList.remove("dark-theme");
+          document.body.style.background = "#667eea";
         }
       }
 
       function changeColor(color) {
         appSettings.color = color;
+        
+        // Faol rangni yangilash
         document.querySelectorAll(".color-option").forEach((opt) => opt.classList.remove("active"));
         event.target.classList.add("active");
 
-        // Update primary color
+        // Header rangini yangilash
+        const darkColor = darkenColor(color, 20);
         document.querySelectorAll("header").forEach((header) => {
-          header.style.background = `linear-gradient(135deg, ${color}, ${darkenColor(color, 20)})`;
+          header.style.background = `linear-gradient(135deg, ${color}, ${darkColor})`;
         });
-        document.querySelectorAll(".speak-btn, .home-btn, .next-btn, .hint-btn").forEach((btn) => {
+        
+        // Boshqa elementlar rangini yangilash
+        document.querySelectorAll(".speak-btn, .home-btn, .next-btn, .hint-btn, .mic-btn").forEach((btn) => {
           btn.style.background = color;
         });
+        
+        // Border ranglarini yangilash
         document.querySelectorAll(".word-card, .voice-panel, .settings-item, .progress-bar").forEach((el) => {
           el.style.borderLeftColor = color;
         });
+        
+        // Active tugmalar rangini yangilash
         document.querySelectorAll(".voice-btn.active, .theme-btn.active, .category-btn.active").forEach((btn) => {
           btn.style.background = color;
           btn.style.borderColor = color;
@@ -1396,8 +1535,11 @@
       // Initialize the app
       window.onload = function () {
         loadWords();
-        initQuizCategories();
-        initSpeakingCategories();
+        
+        // Ovoz tanlashni test qilish
+        setTimeout(() => {
+          speakWord("Welcome to English Learner");
+        }, 1000);
       };
     </script>
   </body>
