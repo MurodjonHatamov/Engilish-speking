@@ -7,6 +7,7 @@
 
     <!-- Tailwind CDN (OK for demo; warning is normal) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="./imgs/logotip.png">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -25,10 +26,60 @@
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       button, a, .tap { -webkit-tap-highlight-color: transparent; }
       mark.hl { padding: 0 .12rem; border-radius: .25rem; }
+
+
+
+  /* fallback when tailwind isn't loaded */
+  #offlineBanner.fallback{
+    position:fixed; top:12px; left:50%; transform:translateX(-50%);
+    z-index:9999; width:min(520px,92%);
+    background:#fff; color:#111;
+    border:1px solid rgba(239,68,68,.25);
+    border-radius:16px;
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+    padding:12px 14px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #offlineBanner.fallback .row{display:flex; align-items:center; gap:12px;}
+  #offlineBanner.fallback .ico{
+    width:36px;height:36px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(239,68,68,.08); color:#ef4444;
+  }
+  #offlineBanner.fallback .t1{font-weight:800; color:#ef4444; font-size:14px;}
+  #offlineBanner.fallback .t2{font-size:12px; color:rgba(17,17,17,.70); margin-top:2px;}
+  #offlineBanner.fallback .x{
+    margin-left:auto; width:36px;height:36px;border-radius:12px;
+    border:1px solid rgba(0,0,0,.10);
+    background:#fff; cursor:pointer;
+  }
+
+
+      
     </style>
   </head>
 
   <body class="h-full bg-neutral-100 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
+    <div id="offlineBanner"
+     class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[9999] w-[92%] max-w-[520px]
+            rounded-2xl border border-red-200 bg-white px-4 py-3 shadow-lg
+            dark:border-red-500/30 dark:bg-neutral-900">
+  <div class="flex items-center gap-3">
+    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400">
+      <i class="fa-solid fa-wifi"></i>
+    </div>
+    <div class="min-w-0">
+      <div class="text-sm font-extrabold text-red-600 dark:text-red-400">Internetda muammo</div>
+      <div class="text-xs text-neutral-600 dark:text-white/70">Internetni yoqing va qayta urinib ko‘ring.</div>
+    </div>
+    <button onclick="hideOfflineBanner()"
+            class="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200
+                   bg-white text-neutral-700 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+</div>
+
     <!-- App shell -->
     <div class="mx-auto h-full w-full max-w-[540px] overflow-hidden border border-neutral-200 bg-white shadow-[0_24px_80px_rgba(0,0,0,.22)] dark:border-white/10 dark:bg-neutral-900">
       <!-- ============ HOME ============ -->
@@ -465,6 +516,37 @@
     </div>
 
     <script>
+
+
+const banner = document.getElementById("offlineBanner");
+
+function showOfflineBanner() {
+  if (!banner) return;
+
+  // If Tailwind not loaded (offline), add fallback styles
+  banner.classList.add("fallback");
+  banner.classList.remove("hidden");
+}
+
+function hideOfflineBanner() {
+  if (!banner) return;
+  banner.classList.add("hidden");
+}
+
+function updateNetworkStatus() {
+  if (navigator.onLine) {
+    hideOfflineBanner();
+  } else {
+    showOfflineBanner();
+  }
+}
+
+// Listen
+window.addEventListener("online", updateNetworkStatus);
+window.addEventListener("offline", updateNetworkStatus);
+
+// Initial check
+updateNetworkStatus();
       /* =========================
          WORD DATABASE (your words)
       ========================== */
