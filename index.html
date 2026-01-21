@@ -1,866 +1,487 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>English Learner</title>
+
+    <!-- Tailwind CDN (OK for demo; warning is normal) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+
     <style>
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #667eea;
-        overflow: hidden;
-        transition: background-color 0.3s ease;
-      }
-      body {
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .app {
-        width: 100%;
-        max-width: 500px;
-        height: 100%;
-        background: #fff;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        display: flex;
-        flex-direction: column;
-      }
+      /* ===== Must-have for screen navigation ===== */
+      .screen, .category-selection { display: none; }
+      .screen.active, .category-selection.active { display: flex; }
 
-      /* Dark Theme */
-      body.dark-theme {
-        background: #121212;
-      }
-      body.dark-theme .app {
-        background: #1e1e1e;
-        color: #ffffff;
-      }
-      body.dark-theme .content {
-        background: #121212;
-        color: #ffffff;
-      }
-      body.dark-theme .word-card,
-      body.dark-theme .voice-panel,
-      body.dark-theme .settings-item,
-      body.dark-theme .question,
-      body.dark-theme .uz-word,
-      body.dark-theme .result,
-      body.dark-theme .opt {
-        background: #2d2d2d;
-        color: #ffffff;
-        border-color: #444;
-      }
-      body.dark-theme .en {
-        color: #6a9eff;
-      }
-      body.dark-theme .uz {
-        color: #cccccc;
-      }
-      body.dark-theme .pron {
-        background: rgba(106, 158, 255, 0.1);
-        color: #aaaaaa;
-      }
-      body.dark-theme .category-btn,
-      body.dark-theme .voice-btn,
-      body.dark-theme .theme-btn,
-      body.dark-theme .opt {
-        background: #2d2d2d;
-        color: #ffffff;
-        border-color: #444;
-      }
-      body.dark-theme .category-btn.active,
-      body.dark-theme .voice-btn.active,
-      body.dark-theme .theme-btn.active {
-        background: #4a6cf7;
-        color: white;
-        border-color: #4a6cf7;
-      }
-      body.dark-theme .score {
-        background: #2d3748;
-        color: #90cdf4;
-      }
-      body.dark-theme .progress {
-        background: #2d2d2d;
-      }
-      body.dark-theme .word-counter {
-        background: rgba(106, 158, 255, 0.2);
-        color: #6a9eff;
-      }
-
-      header {
-        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
-        color: white;
-        padding: 20px;
-        text-align: center;
-        position: relative;
-        flex-shrink: 0;
-        transition: background 0.3s ease;
-      }
-      .back-btn {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.25);
-        border: none;
-        color: white;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        font-size: 20px;
-        cursor: pointer;
-        backdrop-filter: blur(10px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        touch-action: manipulation;
-      }
-      h1 {
-        font-size: 22px;
-        font-weight: 700;
-      }
-
-      /* Screens */
-      .screen {
-        display: none;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-      }
-      .screen.active {
-        display: flex;
-      }
-
-      /* Home Screen */
-      .home {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 30px 20px;
-        gap: 20px;
-      }
-      .home-btn {
-        width: 100%;
-        padding: 22px;
-        font-size: 18px;
-        font-weight: 600;
-        color: white;
-        background: linear-gradient(135deg, #4a6cf7, #2575fc);
-        border: none;
-        border-radius: 16px;
-        cursor: pointer;
-        box-shadow: 0 8px 20px rgba(74, 108, 247, 0.3);
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        touch-action: manipulation;
-        min-height: 60px;
-      }
-      .home-btn:active {
-        transform: translateY(4px);
-        box-shadow: 0 4px 10px rgba(74, 108, 247, 0.3);
-      }
-
-      /* General Content */
-      .content {
-        flex: 1;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: 15px;
-        background: #f8f9ff;
-      }
-
-      /* Word Memorization */
-      .word-card {
-        background: white;
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid #4a6cf7;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .word-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .word-content {
-        flex: 1;
-      }
-      .en {
-        font-size: 20px;
-        font-weight: bold;
-        color: #4a6cf7;
-        margin-bottom: 4px;
-        line-height: 1.2;
-      }
-      .uz {
-        font-size: 16px;
-        color: #333;
-        line-height: 1.3;
-      }
-      .pron {
-        font-size: 13px;
-        color: #6c757d;
-        font-style: italic;
-        background: rgba(74, 108, 247, 0.05);
-        padding: 4px 8px;
-        border-radius: 6px;
-        display: inline-block;
-        margin-top: 4px;
-      }
-      .speak-btn {
-        background: #4a6cf7;
-        color: white;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 10px;
-        font-size: 13px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        box-shadow: 0 3px 8px rgba(74, 108, 247, 0.2);
-        flex-shrink: 0;
-        min-width: 44px;
-        height: 40px;
-        justify-content: center;
-        touch-action: manipulation;
-      }
-
-      /* Voice Settings Panel */
-      .voice-panel {
-        background: white;
-        border-radius: 14px;
-        padding: 15px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid #4a6cf7;
-      }
-      .voice-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .voice-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .voice-btn {
-        padding: 10px 14px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        background: white;
-        cursor: pointer;
-        font-size: 13px;
-        flex: 1;
-        min-width: 0;
-        text-align: center;
-        transition: all 0.2s;
-        touch-action: manipulation;
-      }
-      .voice-btn.active {
-        border-color: #4a6cf7;
-        background: #4a6cf7;
-        color: white;
-      }
-
-      /* Category Filter */
-      .category-filter {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 15px;
-        overflow-x: auto;
-        padding: 5px 0;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-      }
-      .category-filter::-webkit-scrollbar {
-        display: none;
-      }
-      .category-btn {
-        padding: 8px 14px;
-        border: 2px solid #e0e0e0;
-        border-radius: 20px;
-        background: white;
-        cursor: pointer;
-        font-size: 13px;
-        white-space: nowrap;
-        flex-shrink: 0;
-        transition: all 0.2s;
-        touch-action: manipulation;
-      }
-      .category-btn.active {
-        border-color: #4a6cf7;
-        background: #4a6cf7;
-        color: white;
-      }
-
-      /* Word counter */
-      .word-counter {
-        text-align: center;
-        padding: 6px 12px;
-        background: rgba(74, 108, 247, 0.1);
-        color: #4a6cf7;
-        font-size: 13px;
-        font-weight: 600;
-        border-radius: 15px;
-        margin-bottom: 15px;
-        display: inline-block;
-      }
-
-      /* Speaking Practice */
-      .speaking-center {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 20px 15px;
-        gap: 30px;
-      }
-      .uz-word {
-        font-size: 28px;
-        font-weight: bold;
-        text-align: center;
-        color: #333;
-        line-height: 1.3;
-        min-height: 70px;
-        display: flex;
-        align-items: center;
-        background: white;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        border: 2px solid #e9ecef;
-        width: 100%;
-        max-width: 100%;
-        word-break: break-word;
-      }
-      .hint-btn,
-      .mic-btn {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        border: none;
-        color: white;
-        font-size: 28px;
-        cursor: pointer;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        touch-action: manipulation;
-      }
-      .hint-btn {
-        background: #28a745;
-      }
-      .mic-btn {
-        background: #dc3545;
-        font-size: 32px;
-        width: 90px;
-        height: 90px;
-      }
-      .mic-btn.listening {
-        background: #28a745;
-        animation: pulse 1.8s infinite;
-      }
-      @keyframes pulse {
-        0% {
-          box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
-        }
-        70% {
-          box-shadow: 0 0 0 20px rgba(40, 167, 69, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
-        }
-      }
-      .result {
-        font-size: 22px;
-        font-weight: 600;
-        text-align: center;
-        min-height: 50px;
-        padding: 12px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-        border: 2px solid #e9ecef;
-        width: 100%;
-        word-break: break-word;
-      }
-      .speaking-categories,
-      .quiz-categories {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-bottom: 20px;
-        padding: 0 10px;
-      }
-
-      /* Quiz Screen */
-      .score {
-        text-align: center;
-        padding: 10px;
-        background: #e3f2fd;
-        color: #1976d2;
-        font-weight: 600;
-        font-size: 16px;
-        border-radius: 0 0 12px 12px;
-      }
-      .progress {
-        height: 4px;
-        background: #e0e0e0;
-        border-radius: 2px;
-        margin: 0;
-        overflow: hidden;
-      }
-      .progress-bar {
-        height: 100%;
-        background: linear-gradient(135deg, #4a6cf7, #6a11cb);
-        border-radius: 2px;
-        transition: width 0.3s;
-      }
-      .question {
-        font-size: 28px;
-        text-align: center;
-        margin: 20px 0;
-        font-weight: bold;
-        color: #333;
-        min-height: 70px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: white;
-        padding: 15px;
-        border-radius: 16px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        border: 2px solid #e9ecef;
-        word-break: break-word;
-        line-height: 1.3;
-      }
-      .options {
-        display: grid;
-        gap: 12px;
-      }
-      .opt {
-        padding: 18px;
-        font-size: 16px;
-        background: white;
-        border: 2px solid #e0e0e0;
-        border-radius: 14px;
-        cursor: pointer;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        touch-action: manipulation;
-        min-height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        word-break: break-word;
-        line-height: 1.3;
-      }
-      .opt.correct {
-        border-color: #28a745;
-        background: #d4edda;
-        color: #155724;
-      }
-      body.dark-theme .opt.correct {
-        border-color: #28a745;
-        background: #155724;
-        color: #d4edda;
-      }
-      .opt.wrong {
-        border-color: #dc3545;
-        background: #f8d7da;
-        color: #721c24;
-      }
-      body.dark-theme .opt.wrong {
-        border-color: #dc3545;
-        background: #721c24;
-        color: #f8d7da;
-      }
-      .next-btn {
-        margin: 25px auto;
-        padding: 16px 32px;
-        background: #4a6cf7;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 16px;
-        cursor: pointer;
-        display: block;
-        box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
-        opacity: 1;
-        transition: all 0.3s;
-        pointer-events: auto;
-        touch-action: manipulation;
-        min-height: 50px;
-      }
-      .next-btn.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      /* Settings Screen */
-      .settings-item {
-        background: white;
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid #4a6cf7;
-      }
-      .settings-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      body.dark-theme .settings-title {
-        color: #ffffff;
-      }
-      .settings-options {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .theme-btn {
-        padding: 10px 16px;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        background: white;
-        cursor: pointer;
-        font-size: 14px;
-        flex: 1;
-        min-width: 100px;
-        text-align: center;
-        touch-action: manipulation;
-      }
-      .theme-btn.active {
-        border-color: #4a6cf7;
-        background: #4a6cf7;
-        color: white;
-      }
-      .color-option {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        cursor: pointer;
-        border: 3px solid transparent;
-        flex-shrink: 0;
-      }
-      .color-option.active {
-        border-color: #333;
-      }
-      body.dark-theme .color-option.active {
-        border-color: #fff;
-      }
-
-      /* Category Selection Screen */
-      .category-selection {
-        display: none;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-      }
-      .category-selection.active {
-        display: flex;
-      }
-      .category-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 20px;
-      }
-      .category-card {
-        background: white;
-        border-radius: 16px;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-        border: 2px solid #e0e0e0;
-        transition: all 0.3s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100px;
-      }
-      .category-card:hover {
-        transform: translateY(-5px);
-        border-color: #4a6cf7;
-      }
-      .category-icon {
-        font-size: 32px;
-        color: #4a6cf7;
-        margin-bottom: 10px;
-      }
-      .category-name {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-      }
-      body.dark-theme .category-card {
-        background: #2d2d2d;
-        border-color: #444;
-      }
-      body.dark-theme .category-name {
-        color: #fff;
-      }
-
-      /* Mobile optimizations */
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 20px;
-        }
-        .home-btn {
-          padding: 18px;
-          font-size: 16px;
-          min-height: 55px;
-        }
-        .en {
-          font-size: 18px;
-        }
-        .uz {
-          font-size: 15px;
-        }
-        .question {
-          font-size: 24px;
-          padding: 12px;
-        }
-        .opt {
-          padding: 16px;
-          font-size: 15px;
-        }
-        .uz-word {
-          font-size: 24px;
-          padding: 15px;
-        }
-        .result {
-          font-size: 18px;
-          padding: 10px 16px;
-        }
-        .speak-btn {
-          padding: 6px 12px;
-          font-size: 12px;
-          min-width: 40px;
-          height: 36px;
-        }
-        .voice-btn,
-        .category-btn,
-        .theme-btn {
-          padding: 8px 12px;
-          font-size: 12px;
-        }
-        .category-grid {
-          grid-template-columns: 1fr;
-          gap: 10px;
-        }
-        .category-card {
-          min-height: 80px;
-          padding: 15px;
-        }
-      }
+      /* Small UX */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      button, a, .tap { -webkit-tap-highlight-color: transparent; }
+      mark.hl { padding: 0 .12rem; border-radius: .25rem; }
     </style>
   </head>
-  <body>
-    <div class="app">
-      <!-- Home Screen -->
-      <div id="home" class="screen active">
-        <header><h1>English Learner</h1></header>
-        <div class="home">
-          <button class="home-btn" onclick="showCategorySelection('memorize')">
-            <i class="fas fa-book-open"></i> Word Memorization
-          </button>
-          <button class="home-btn" onclick="showCategorySelection('quiz')">
-            <i class="fas fa-pencil-alt"></i> Practice Quiz
-          </button>
-          <button class="home-btn" onclick="showCategorySelection('speaking')">
-            <i class="fas fa-microphone"></i> Speaking Practice
-          </button>
-          <button class="home-btn" onclick="showScreen('settings')">
-            <i class="fas fa-cog"></i> Settings
-          </button>
-        </div>
-      </div>
 
-      <!-- Category Selection Screen -->
-      <div id="categorySelection" class="category-selection">
-        <header>
-          <button class="back-btn" onclick="showScreen('home')">←</button>
-          <h1 id="categoryTitle">Select Category</h1>
-        </header>
-        <div class="content">
-          <div class="category-grid" id="categoryGrid"></div>
-        </div>
-      </div>
-
-      <!-- Word Memorization Screen -->
-      <div id="memorize" class="screen">
-        <header>
-          <button class="back-btn" onclick="showScreen('home')">←</button>
-          <h1>Word Memorization</h1>
-        </header>
-        <div class="content">
-          <!-- Voice Settings Panel -->
-          <div class="voice-panel">
-            <div class="voice-title">
-              <i class="fas fa-volume-up"></i>
-              Pronunciation Voice
+  <body class="h-full bg-neutral-100 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
+    <!-- App shell -->
+    <div class="mx-auto h-full w-full max-w-[540px] overflow-hidden border border-neutral-200 bg-white shadow-[0_24px_80px_rgba(0,0,0,.22)] dark:border-white/10 dark:bg-neutral-900">
+      <!-- ============ HOME ============ -->
+      <section id="home" class="screen active h-full flex-col">
+        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
+          <div class="flex items-center justify-between px-4 py-3">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-neutral-900 dark:bg-white"></span>
+                <h1 class="truncate text-[15px] font-extrabold tracking-tight">English Learner</h1>
+              </div>
+              <p class="truncate text-xs text-neutral-500 dark:text-white/60">Premium black & white • fast & clean</p>
             </div>
-            <div class="voice-options">
-              <button class="voice-btn active" onclick="changeVoice('female')">Female</button>
-              <button class="voice-btn" onclick="changeVoice('male')">Male</button>
-              <button class="voice-btn" onclick="changeVoice('child')">Child</button>
-              <button class="voice-btn" onclick="changeVoice('slow')">Slow</button>
+
+            <div class="flex items-center gap-2">
+              <button
+                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                onclick="toggleTheme()"
+                aria-label="Toggle theme"
+                title="Theme"
+              >
+                <i class="fa-solid fa-moon hidden dark:inline"></i>
+                <i class="fa-solid fa-sun inline dark:hidden"></i>
+              </button>
+
+              <button
+                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                onclick="showScreen('settings')"
+                aria-label="Settings"
+                title="Settings"
+              >
+                <i class="fa-solid fa-gear"></i>
+              </button>
             </div>
           </div>
-          
-          <!-- Category Filter -->
-          <div class="category-filter" id="categoryFilter"></div>
-          
-          <div class="word-counter" id="wordCounter"></div>
-          <div id="wordList"></div>
-        </div>
-      </div>
-
-      <!-- Quiz Screen -->
-      <div id="quiz" class="screen">
-        <header>
-          <button class="back-btn" onclick="showScreen('home')">←</button>
-          <h1>Practice Quiz</h1>
         </header>
-        <div class="score">
-          Score: <span id="scoreValue">0</span> / <span id="totalValue">0</span>
-        </div>
-        <div class="progress">
-          <div class="progress-bar" id="quizProgress" style="width: 0%"></div>
-        </div>
-        <div class="content">
-          <div class="question" id="questionText"></div>
-          <div class="options" id="optionsContainer"></div>
-          <div class="result" id="feedback"></div>
-          <button class="next-btn" id="nextButton" onclick="nextQuestion()">Next →</button>
-        </div>
-      </div>
 
-      <!-- Speaking Practice Screen -->
-      <div id="speaking" class="screen">
-        <header>
-          <button class="back-btn" onclick="showScreen('home')">←</button>
-          <h1>Speaking Practice</h1>
+        <main class="flex-1 overflow-y-auto px-4 py-4">
+          <div class="grid gap-3">
+            <button
+              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
+              onclick="showCategorySelection('memorize')"
+            >
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
+                <i class="fa-solid fa-book-open"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold tracking-tight">Word Memorization</div>
+                <div class="text-xs text-neutral-500 dark:text-white/60">Search • ⭐ Favorites • Pronunciation</div>
+              </div>
+              <div class="ml-auto text-neutral-400 dark:text-white/40">
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            </button>
+
+            <button
+              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
+              onclick="showCategorySelection('quiz')"
+            >
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold tracking-tight">Practice Quiz</div>
+                <div class="text-xs text-neutral-500 dark:text-white/60">4 options • instant feedback</div>
+              </div>
+              <div class="ml-auto text-neutral-400 dark:text-white/40">
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            </button>
+
+            <button
+              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
+              onclick="showCategorySelection('speaking')"
+            >
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
+                <i class="fa-solid fa-microphone"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold tracking-tight">Speaking Practice</div>
+                <div class="text-xs text-neutral-500 dark:text-white/60">Mic • smart matching</div>
+              </div>
+              <div class="ml-auto text-neutral-400 dark:text-white/40">
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            </button>
+
+            <button
+              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
+              onclick="showScreen('settings')"
+            >
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
+                <i class="fa-solid fa-sliders"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold tracking-tight">Settings</div>
+                <div class="text-xs text-neutral-500 dark:text-white/60">Theme • voice • data</div>
+              </div>
+              <div class="ml-auto text-neutral-400 dark:text-white/40">
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            </button>
+          </div>
+
+          <div class="mt-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+            <div class="font-extrabold text-neutral-900 dark:text-white">Premium UX tips</div>
+            <ul class="mt-2 list-disc space-y-1 pl-4">
+              <li>Search english/uzbek/pron.</li>
+              <li>⭐ favorites are saved on your phone.</li>
+              <li>Dark mode is designed for comfort.</li>
+            </ul>
+          </div>
+        </main>
+      </section>
+
+      <!-- ============ CATEGORY SELECTION ============ -->
+      <section id="categorySelection" class="category-selection h-full flex-col">
+        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
+          <div class="flex items-center justify-between px-4 py-3">
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="showScreen('home')"
+              aria-label="Back"
+              title="Back"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+
+            <div class="min-w-0 text-center">
+              <div id="categoryTitle" class="truncate text-sm font-extrabold">Select Category</div>
+              <div class="text-xs text-neutral-500 dark:text-white/60">Pick a category to continue</div>
+            </div>
+
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="toggleTheme()"
+              aria-label="Toggle theme"
+              title="Theme"
+            >
+              <i class="fa-solid fa-moon hidden dark:inline"></i>
+              <i class="fa-solid fa-sun inline dark:hidden"></i>
+            </button>
+          </div>
         </header>
-        <div class="content" style="padding: 0">
-          <div class="speaking-center">
-            <div class="uz-word" id="uzWord">Tap the microphone to start</div>
-            <div class="result" id="speakingResult"></div>
-            <button class="hint-btn" onclick="giveHint()">
-              <i class="fas fa-volume-up"></i>
+
+        <div class="flex-1 overflow-y-auto px-4 py-4">
+          <div id="categoryGrid" class="grid grid-cols-2 gap-3"></div>
+        </div>
+      </section>
+
+      <!-- ============ MEMORIZE ============ -->
+      <section id="memorize" class="screen h-full flex-col">
+        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
+          <div class="flex items-center justify-between px-4 py-3">
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="showScreen('home')"
+              aria-label="Back"
+              title="Back"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
             </button>
-            <button class="mic-btn" id="micButton">
-              <i class="fas fa-microphone"></i>
+
+            <div class="min-w-0 text-center">
+              <div class="truncate text-sm font-extrabold">Word Memorization</div>
+              <div class="text-xs text-neutral-500 dark:text-white/60">Search • ⭐ • 🔊</div>
+            </div>
+
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="toggleTheme()"
+              aria-label="Toggle theme"
+              title="Theme"
+            >
+              <i class="fa-solid fa-moon hidden dark:inline"></i>
+              <i class="fa-solid fa-sun inline dark:hidden"></i>
             </button>
-            <button class="next-btn" id="nextWordButton" onclick="nextSpeakingWord()" style="display: none;">
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto px-4 py-4">
+          <!-- Search -->
+          <div class="rounded-2xl border border-neutral-200 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+            <div class="flex items-center gap-2">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 dark:border-white/10 dark:bg-white/5">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </div>
+
+              <input
+                id="searchInput"
+                class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm font-bold outline-none focus:ring-4 focus:ring-neutral-200 dark:border-white/10 dark:bg-neutral-900 dark:focus:ring-white/10"
+                placeholder="Search (english / uzbek / pron)..."
+                oninput="onSearchChange(this.value)"
+                autocomplete="off"
+              />
+
+              <button
+                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white transition active:scale-95 dark:border-white/10 dark:bg-neutral-900"
+                onclick="clearSearch()"
+                aria-label="Clear"
+                title="Clear"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Voice -->
+          <div class="mt-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold">
+              <i class="fa-solid fa-volume-high"></i>
+              Voice
+            </div>
+            <div class="flex flex-wrap gap-2" id="voiceButtonsMemorize"></div>
+          </div>
+
+          <!-- Category chips -->
+          <div class="mt-3 flex gap-2 overflow-x-auto pb-2 no-scrollbar" id="categoryFilter"></div>
+
+          <!-- Counter -->
+          <div id="wordCounter" class="mt-2 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"></div>
+
+          <!-- List -->
+          <div id="wordList" class="mt-3 space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="quiz" class="screen h-full flex-col">
+        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
+          <div class="flex items-center justify-between px-4 py-3">
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="showScreen('home')"
+              aria-label="Back"
+              title="Back"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+
+            <div class="min-w-0 text-center">
+              <div class="truncate text-sm font-extrabold">Practice Quiz</div>
+              <div class="text-xs text-neutral-500 dark:text-white/60">Category-based</div>
+            </div>
+
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="toggleTheme()"
+              aria-label="Toggle theme"
+              title="Theme"
+            >
+              <i class="fa-solid fa-moon hidden dark:inline"></i>
+              <i class="fa-solid fa-sun inline dark:hidden"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="border-b border-neutral-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-neutral-900">
+          <div class="flex items-center justify-between text-xs font-extrabold">
+            <div>Score: <span id="scoreValue">0</span> / <span id="totalValue">0</span></div>
+            <div class="text-neutral-500 dark:text-white/60">Goal: 10</div>
+          </div>
+          <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-white/10">
+            <div id="quizProgress" class="h-full w-0 rounded-full bg-neutral-900 transition-all dark:bg-white"></div>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 py-4">
+          <div id="questionText" class="rounded-2xl border border-neutral-200 bg-white p-5 text-center text-2xl font-extrabold tracking-tight shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900"></div>
+
+          <div id="optionsContainer" class="mt-3 grid gap-2"></div>
+
+          <div id="feedback" class="mt-3 min-h-[54px] rounded-2xl border border-neutral-200 bg-white p-3 text-center text-base font-extrabold text-neutral-700 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"></div>
+
+          <button
+            id="nextButton"
+            class="mt-4 w-full rounded-2xl bg-neutral-900 px-4 py-4 text-sm font-extrabold text-white shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:bg-white dark:text-neutral-900"
+            onclick="nextQuestion()"
+          >
+            Next →
+          </button>
+        </div>
+      </section>
+
+      <!-- ============ SPEAKING ============ -->
+      <section id="speaking" class="screen h-full flex-col">
+        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
+          <div class="flex items-center justify-between px-4 py-3">
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="showScreen('home')"
+              aria-label="Back"
+              title="Back"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+
+            <div class="min-w-0 text-center">
+              <div class="truncate text-sm font-extrabold">Speaking Practice</div>
+              <div class="text-xs text-neutral-500 dark:text-white/60">Mic • hint • smart check</div>
+            </div>
+
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="toggleTheme()"
+              aria-label="Toggle theme"
+              title="Theme"
+            >
+              <i class="fa-solid fa-moon hidden dark:inline"></i>
+              <i class="fa-solid fa-sun inline dark:hidden"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto px-4 py-6">
+          <div class="mx-auto flex max-w-md flex-col items-center gap-4">
+            <div id="uzWord" class="w-full rounded-2xl border border-neutral-200 bg-white p-6 text-center text-2xl font-extrabold tracking-tight shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+              Tap the microphone to start
+            </div>
+
+            <div id="speakingResult" class="w-full min-h-[54px] rounded-2xl border border-neutral-200 bg-white p-3 text-center text-base font-extrabold text-neutral-700 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"></div>
+
+            <div class="flex items-center gap-3">
+              <button
+                class="inline-flex h-14 w-14 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                onclick="giveHint()"
+                aria-label="Hint"
+                title="Hint"
+              >
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+
+              <button
+                id="micButton"
+                class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-neutral-900 text-2xl text-white shadow-[0_24px_80px_rgba(0,0,0,.22)] transition active:scale-95 dark:bg-white dark:text-neutral-900"
+                aria-label="Microphone"
+                title="Microphone"
+              >
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+            </div>
+
+            <button
+              id="nextWordButton"
+              class="hidden w-full rounded-2xl bg-neutral-900 px-4 py-4 text-sm font-extrabold text-white shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:bg-white dark:text-neutral-900"
+              onclick="nextSpeakingWord()"
+            >
               Next Word →
             </button>
+
+            <div class="w-full rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+              <div class="font-extrabold text-neutral-900 dark:text-white">Note</div>
+              Speech recognition works best in Chrome/Edge on Android.
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Settings Screen -->
-      <div id="settings" class="screen">
-        <header>
-          <button class="back-btn" onclick="showScreen('home')">←</button>
-          <h1>Settings</h1>
+      <!-- ============ SETTINGS ============ -->
+      <section id="settings" class="screen h-full flex-col">
+        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
+          <div class="flex items-center justify-between px-4 py-3">
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="showScreen('home')"
+              aria-label="Back"
+              title="Back"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+
+            <div class="min-w-0 text-center">
+              <div class="truncate text-sm font-extrabold">Settings</div>
+              <div class="text-xs text-neutral-500 dark:text-white/60">Premium controls</div>
+            </div>
+
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+              onclick="toggleTheme()"
+              aria-label="Toggle theme"
+              title="Theme"
+            >
+              <i class="fa-solid fa-moon hidden dark:inline"></i>
+              <i class="fa-solid fa-sun inline dark:hidden"></i>
+            </button>
+          </div>
         </header>
-        <div class="content">
-          <!-- Voice Settings -->
-          <div class="settings-item">
-            <div class="settings-title">
-              <i class="fas fa-volume-up"></i>
-              Voice Settings
+
+        <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+          <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold">
+              <i class="fa-solid fa-circle-half-stroke"></i> Theme
             </div>
-            <div class="settings-options">
-              <button class="voice-btn active" onclick="changeVoice('female')">Female</button>
-              <button class="voice-btn" onclick="changeVoice('male')">Male</button>
-              <button class="voice-btn" onclick="changeVoice('child')">Child</button>
-              <button class="voice-btn" onclick="changeVoice('slow')">Slow</button>
+            <div class="flex gap-2">
+              <button class="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="setTheme('light')">
+                Light
+              </button>
+              <button class="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="setTheme('dark')">
+                Dark
+              </button>
             </div>
+            <p class="mt-2 text-xs text-neutral-500 dark:text-white/60">Theme is saved automatically.</p>
           </div>
 
-          <div class="settings-item">
-            <div class="settings-title">
-              <i class="fas fa-palette"></i>
-              Theme
+          <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold">
+              <i class="fa-solid fa-volume-high"></i> Voice
             </div>
-            <div class="settings-options">
-              <button class="theme-btn active" onclick="changeTheme('light')">Light</button>
-              <button class="theme-btn" onclick="changeTheme('dark')">Dark</button>
-            </div>
+            <div class="flex flex-wrap gap-2" id="voiceButtonsSettings"></div>
+            <p class="mt-2 text-xs text-neutral-500 dark:text-white/60">Voice affects 🔊 pronunciation everywhere.</p>
           </div>
 
-          <div class="settings-item">
-            <div class="settings-title">
-              <i class="fas fa-fill-drip"></i>
-              App Color
+          <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+            <div class="mb-2 flex items-center gap-2 text-sm font-extrabold">
+              <i class="fa-solid fa-database"></i> Data
             </div>
-            <div class="settings-options">
-              <div class="color-option active" style="background: #4a6cf7" onclick="changeColor('#4a6cf7')"></div>
-              <div class="color-option" style="background: #28a745" onclick="changeColor('#28a745')"></div>
-              <div class="color-option" style="background: #dc3545" onclick="changeColor('#dc3545')"></div>
-              <div class="color-option" style="background: #ff6b35" onclick="changeColor('#ff6b35')"></div>
-              <div class="color-option" style="background: #6f42c1" onclick="changeColor('#6f42c1')"></div>
-              <div class="color-option" style="background: #20c997" onclick="changeColor('#20c997')"></div>
+            <div class="grid gap-2">
+              <button class="w-full rounded-2xl bg-neutral-900 px-4 py-3 text-sm font-extrabold text-white transition active:scale-[0.99] dark:bg-white dark:text-neutral-900" onclick="exportFavorites()">
+                Export ⭐ Favorites
+              </button>
+              <button class="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="clearFavorites()">
+                Clear ⭐ Favorites
+              </button>
             </div>
+            <p class="mt-2 text-xs text-neutral-500 dark:text-white/60">Favorites are stored in LocalStorage.</p>
+          </div>
+
+          <div class="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+            <div class="font-extrabold text-neutral-900 dark:text-white">Troubleshooting</div>
+            If microphone doesn’t work → allow mic permission, use Chrome/Edge.
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <script>
-      // Words database with pronunciation and categories
+      /* =========================
+         WORD DATABASE (your words)
+      ========================== */
       const words = [
-        // --- Adverbs of frequency (Rishlik Ravishlari) ---
-        {en:"always", pron:"ˈɔːlweɪz", uz:"har doim", category:"adverbs"},
-        {en:"usually", pron:"ˈjuːʒuəli", uz:"odatda", category:"adverbs"},
-        {en:"sometimes", pron:"ˈsʌmtaɪmz", uz:"ba'zan", category:"adverbs"},
-        {en:"never", pron:"ˈnevər", uz:"hech qachon", category:"adverbs"},
+        // Adverbs
+        { en: "always", pron: "ˈɔːlweɪz", uz: "har doim", category: "adverbs" },
+        { en: "usually", pron: "ˈjuːʒuəli", uz: "odatda", category: "adverbs" },
+        { en: "sometimes", pron: "ˈsʌmtaɪmz", uz: "ba'zan", category: "adverbs" },
+        { en: "never", pron: "ˈnevər", uz: "hech qachon", category: "adverbs" },
 
-        // --- Daily routine (Kundalik tartib) ---
-        {en:"get up", pron:"get ʌp", uz:"uyg'onmoq, turmoq", category:"daily routine"},
-        {en:"have a shower", pron:"hæv ə ˈʃaʊər", uz:"dush qilmoq", category:"daily routine"},
+        // Daily routine
+        { en: "get up", pron: "get ʌp", uz: "uyg'onmoq, turmoq", category: "daily routine" },
+        { en: "have a shower", pron: "hæv ə ˈʃaʊər", uz: "dush qilmoq", category: "daily routine" },
+
+        // Add more here...
+
+        
         {en:"have breakfast", pron:"hæv ˈbrekfəst", uz:"nonushta qilmoq", category:"daily routine"},
         {en:"go to work", pron:"goʊ tu wɜːrk", uz:"ishga bormoq", category:"daily routine"},
         {en:"go to school", pron:"goʊ tu skuːl", uz:"maktabga bormoq", category:"daily routine"},
@@ -1235,108 +856,178 @@
 
 
 
+      ];
 
+      const categoryInfo = {
+        all: { name: "All", icon: "fa-solid fa-globe" },
+        favorites: { name: "⭐ Favorites", icon: "fa-solid fa-star" },
+        adverbs: { name: "Adverbs", icon: "fa-solid fa-a" },
+        "daily routine": { name: "Daily Routine", icon: "fa-solid fa-calendar-day" },
+      };
 
+      /* =========================
+         STATE
+      ========================== */
+      const LS_THEME = "el_theme_v1";
+      const LS_VOICE = "el_voice_v1";
+      const LS_FAVS = "el_favorites_v1";
 
-
-
-
-
-
-
-
-
-
-];
-
-      // App state
-      let currentWord = null;
-      let quizScore = 0;
-      let quizTotal = 0;
-      let recognition = null;
-      let isListening = false;
       let appSettings = {
-        theme: "light",
-        color: "#4a6cf7",
+        theme: "dark",
         voice: "female",
         memorizationCategory: "all",
         quizCategory: "all",
         speakingCategory: "all",
-        nextScreen: null
+        nextScreen: null,
+        search: "",
       };
 
-      // Category name mapping with icons
-      const categoryInfo = {
-        'all': { name: 'All Words', icon: 'fas fa-globe' },
-        'adverbs': { name: 'Adverbs', icon: 'fas fa-ad' },
-        'daily routine': { name: 'Daily Routine', icon: 'fas fa-calendar-day' },
-        'time': { name: 'Time Words', icon: 'fas fa-clock' },
-        'verbs': { name: 'Verbs', icon: 'fas fa-running' },
-        'objects': { name: 'Objects', icon: 'fas fa-cube' },
-        'food': { name: 'Food', icon: 'fas fa-utensils' },
-        'arts': { name: 'Arts', icon: 'fas fa-palette' },
-        'places': { name: 'Places', icon: 'fas fa-map-marker-alt' },
-        'adjectives': { name: 'Adjectives', icon: 'fas fa-font' },
-        'pronouns': { name: 'Pronouns', icon: 'fas fa-user' },
-        'interjections': { name: 'Interjections', icon: 'fas fa-exclamation' },
-        'people': { name: 'People', icon: 'fas fa-users' },
-        'family members': { name: 'Family Members', icon: 'fas fa-home' },
-        'question words': { name: 'Question Words', icon: 'fas fa-question' }
-      };
+      let favorites = new Set(loadFavorites());
 
-      // Screen navigation
-      function showScreen(screenId) {
-        document.querySelectorAll(".screen, .category-selection").forEach((screen) => {
-          screen.classList.remove("active");
-        });
+      let currentWord = null;
+      let quizScore = 0;
+      let quizTotal = 0;
 
-        const screen = document.getElementById(screenId);
-        if (screen) {
-          screen.classList.add("active");
+      let recognition = null;
+      let isListening = false;
+
+      /* =========================
+         HELPERS
+      ========================== */
+      function escapeHTML(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+      function escapeQuotes(str) {
+        return String(str).replaceAll("\\", "\\\\").replaceAll("'", "\\'");
+      }
+      function escapeRegExp(s) {
+        return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+      function highlightText(escapedHtml, q) {
+        if (!q) return escapedHtml;
+        const re = new RegExp(`(${escapeRegExp(q)})`, "ig");
+        return escapedHtml.replace(re, `<mark class="hl bg-yellow-200 text-neutral-900 dark:bg-yellow-300">$1</mark>`);
+      }
+      function wordId(w) {
+        return `${w.en}|||${w.category}`.toLowerCase();
+      }
+
+      /* =========================
+         THEME (saved)
+      ========================== */
+      function applyTheme() {
+        document.documentElement.classList.toggle("dark", appSettings.theme === "dark");
+        localStorage.setItem(LS_THEME, appSettings.theme);
+      }
+      function setTheme(theme) {
+        appSettings.theme = theme;
+        applyTheme();
+      }
+      function toggleTheme() {
+        setTheme(appSettings.theme === "dark" ? "light" : "dark");
+      }
+
+      /* =========================
+         FAVORITES (saved)
+      ========================== */
+      function loadFavorites() {
+        try {
+          return JSON.parse(localStorage.getItem(LS_FAVS) || "[]");
+        } catch {
+          return [];
         }
-
-        if (screenId === "memorize") {
-          loadWords();
-        } else if (screenId === "quiz") {
-          resetQuiz();
-          nextQuestion();
-        } else if (screenId === "speaking") {
-          nextSpeakingWord();
+      }
+      function saveFavorites() {
+        localStorage.setItem(LS_FAVS, JSON.stringify([...favorites]));
+      }
+      function toggleFavorite(id) {
+        if (favorites.has(id)) favorites.delete(id);
+        else favorites.add(id);
+        saveFavorites();
+        loadWords();
+      }
+      function clearFavorites() {
+        favorites = new Set();
+        saveFavorites();
+        alert("Favorites cleared ✅");
+        loadWords();
+      }
+      function exportFavorites() {
+        const favWords = words.filter((w) => favorites.has(wordId(w)));
+        const text = favWords.map((w) => `${w.en} — ${w.uz}  /${w.pron}/  [${w.category}]`).join("\n");
+        if (!text.trim()) {
+          alert("No favorites yet ⭐");
+          return;
+        }
+        // Copy to clipboard if possible
+        if (navigator.clipboard?.writeText) {
+          navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard ✅"));
+        } else {
+          // fallback
+          prompt("Copy favorites:", text);
         }
       }
 
-      // Category selection screen
+      /* =========================
+         NAVIGATION
+      ========================== */
+      function showScreen(screenId) {
+        document.querySelectorAll(".screen, .category-selection").forEach((s) => s.classList.remove("active"));
+        const el = document.getElementById(screenId);
+        if (el) el.classList.add("active");
+
+        if (screenId === "memorize") loadWords();
+        if (screenId === "quiz") {
+          resetQuiz();
+          nextQuestion();
+        }
+        if (screenId === "speaking") nextSpeakingWord();
+      }
+
       function showCategorySelection(nextScreen) {
         appSettings.nextScreen = nextScreen;
+
         const title = document.getElementById("categoryTitle");
+        title.textContent =
+          nextScreen === "memorize" ? "Select Category — Memorize"
+          : nextScreen === "quiz" ? "Select Category — Quiz"
+          : "Select Category — Speaking";
+
+        const categories = ["all", ...new Set(words.map((w) => w.category))];
+
         const grid = document.getElementById("categoryGrid");
-        
-        if (nextScreen === "memorize") {
-          title.textContent = "Select Category for Memorization";
-        } else if (nextScreen === "quiz") {
-          title.textContent = "Select Category for Quiz";
-        } else if (nextScreen === "speaking") {
-          title.textContent = "Select Category for Speaking Practice";
-        }
-        
-        // Get unique categories
-        const categories = ["all", ...new Set(words.map(word => word.category))];
-        
-        grid.innerHTML = categories.map(category => `
-          <div class="category-card" onclick="selectCategory('${category}')">
-            <div class="category-icon">
-              <i class="${categoryInfo[category]?.icon || 'fas fa-folder'}"></i>
-            </div>
-            <div class="category-name">${categoryInfo[category]?.name || category}</div>
-          </div>
-        `).join('');
-        
+        grid.innerHTML = categories
+          .map((cat) => {
+            const meta = categoryInfo[cat] || { name: cat, icon: "fa-solid fa-folder" };
+            return `
+              <button
+                class="tap rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
+                onclick="selectCategory('${escapeQuotes(cat)}')"
+              >
+                <div class="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
+                  <i class="${meta.icon}"></i>
+                </div>
+                <div class="text-sm font-extrabold tracking-tight">${escapeHTML(meta.name)}</div>
+                <div class="text-xs text-neutral-500 dark:text-white/60">Tap to choose</div>
+              </button>
+            `;
+          })
+          .join("");
+
         showScreen("categorySelection");
       }
 
       function selectCategory(category) {
         if (appSettings.nextScreen === "memorize") {
           appSettings.memorizationCategory = category;
+          appSettings.search = "";
+          const si = document.getElementById("searchInput");
+          if (si) si.value = "";
           showScreen("memorize");
         } else if (appSettings.nextScreen === "quiz") {
           appSettings.quizCategory = category;
@@ -1347,231 +1038,330 @@
         }
       }
 
-      // Word memorization
+      /* =========================
+         SEARCH
+      ========================== */
+      function onSearchChange(val) {
+        appSettings.search = (val || "").trim().toLowerCase();
+        loadWords();
+      }
+      function clearSearch() {
+        appSettings.search = "";
+        const si = document.getElementById("searchInput");
+        if (si) si.value = "";
+        loadWords();
+      }
+
+      /* =========================
+         VOICE (saved)
+      ========================== */
+      function speakWord(text) {
+        speechSynthesis.cancel();
+        setTimeout(() => {
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = "en-US";
+
+          switch (appSettings.voice) {
+            case "male":
+              u.rate = 0.9;
+              u.pitch = 0.7;
+              break;
+            case "child":
+              u.rate = 0.8;
+              u.pitch = 1.5;
+              break;
+            case "slow":
+              u.rate = 0.6;
+              u.pitch = 1.0;
+              break;
+            default:
+              u.rate = 0.9;
+              u.pitch = 1.2;
+          }
+
+          u.volume = 1.0;
+          speechSynthesis.speak(u);
+        }, 60);
+      }
+
+      function setVoice(voice) {
+        appSettings.voice = voice;
+        localStorage.setItem(LS_VOICE, voice);
+        renderVoiceButtons();
+      }
+
+      function renderVoiceButtons() {
+        const voices = [
+          { key: "female", label: "Female" },
+          { key: "male", label: "Male" },
+          { key: "child", label: "Child" },
+          { key: "slow", label: "Slow" },
+        ];
+
+        const makeBtn = (v) => {
+          const active = appSettings.voice === v.key;
+          const cls =
+            "rounded-full border px-3 py-2 text-xs font-extrabold transition active:scale-95 " +
+            (active
+              ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900"
+              : "border-neutral-200 bg-white text-neutral-900 dark:border-white/10 dark:bg-neutral-900 dark:text-white");
+          return `<button class="${cls}" onclick="setVoice('${v.key}')">${v.label}</button>`;
+        };
+
+        const html = voices.map(makeBtn).join("");
+        const a = document.getElementById("voiceButtonsMemorize");
+        const b = document.getElementById("voiceButtonsSettings");
+        if (a) a.innerHTML = html;
+        if (b) b.innerHTML = html;
+      }
+
+      /* =========================
+         MEMORIZE (list)
+      ========================== */
       function loadWords() {
         const wordList = document.getElementById("wordList");
         const wordCounter = document.getElementById("wordCounter");
         const categoryFilter = document.getElementById("categoryFilter");
-        
-        // Create category filter buttons
-        const categories = ["all", ...new Set(words.map(word => word.category))];
-        categoryFilter.innerHTML = categories.map(category => `
-          <button class="category-btn ${category === appSettings.memorizationCategory ? 'active' : ''}" 
-                  onclick="filterMemorization('${category}')">
-            ${category === 'all' ? 'All Words' : (categoryInfo[category]?.name || category)}
-          </button>
-        `).join('');
-        
-        // Filter words by category
-        const filteredWords = appSettings.memorizationCategory === "all" 
-          ? words 
-          : words.filter(word => word.category === appSettings.memorizationCategory);
 
-        wordCounter.textContent = `Showing ${filteredWords.length} words`;
-        
-        if (filteredWords.length === 0) {
-          wordList.innerHTML = '<div class="word-card">No words found in this category.</div>';
+        // chips (include favorites)
+        const categories = ["all", "favorites", ...new Set(words.map((w) => w.category))];
+        categoryFilter.innerHTML = categories
+          .map((cat) => {
+            const active = cat === appSettings.memorizationCategory;
+            const label = categoryInfo[cat]?.name || cat;
+            const base = "whitespace-nowrap rounded-full border px-3 py-2 text-xs font-extrabold transition active:scale-95";
+            const activeCls = "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900";
+            const idleCls = "border-neutral-200 bg-white text-neutral-900 dark:border-white/10 dark:bg-neutral-900 dark:text-white";
+            return `<button class="${base} ${active ? activeCls : idleCls}" onclick="filterMemorization('${escapeQuotes(cat)}')">${escapeHTML(label)}</button>`;
+          })
+          .join("");
+
+        // filter by category
+        let list = words;
+        if (appSettings.memorizationCategory === "favorites") {
+          list = words.filter((w) => favorites.has(wordId(w)));
+        } else if (appSettings.memorizationCategory !== "all") {
+          list = words.filter((w) => w.category === appSettings.memorizationCategory);
+        }
+
+        // search filter
+        const q = appSettings.search;
+        if (q) {
+          list = list.filter(
+            (w) =>
+              w.en.toLowerCase().includes(q) ||
+              w.uz.toLowerCase().includes(q) ||
+              (w.pron || "").toLowerCase().includes(q)
+          );
+        }
+
+        wordCounter.innerHTML = `
+          <span class="h-2 w-2 rounded-full bg-neutral-900 dark:bg-white"></span>
+          <span><b class="text-neutral-900 dark:text-white">${list.length}</b> words</span>
+        `;
+
+        if (!list.length) {
+          wordList.innerHTML = `
+            <div class="rounded-2xl border border-neutral-200 bg-white p-4 text-sm font-extrabold text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-white/80">
+              No words found.
+            </div>
+          `;
           return;
         }
 
-        wordList.innerHTML = filteredWords.map(word => `
-          <div class="word-card">
-            <div class="word-header">
-              <div class="word-content">
-                <div class="en">${word.en}</div>
-                <div class="uz">${word.uz}</div>
-                <div class="pron">/${word.pron}/</div>
+        wordList.innerHTML = list
+          .map((w) => {
+            const id = wordId(w);
+            const fav = favorites.has(id);
+
+            const enEsc = escapeHTML(w.en);
+            const uzEsc = escapeHTML(w.uz);
+            const prEsc = escapeHTML(w.pron || "");
+
+            return `
+              <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="text-lg font-extrabold tracking-tight">${highlightText(enEsc, q)}</div>
+                    <div class="mt-1 text-sm text-neutral-600 dark:text-white/70">${highlightText(uzEsc, q)}</div>
+                    <div class="mt-2 inline-flex rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-bold text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+                      /${highlightText(prEsc, q)}/
+                    </div>
+                    <div class="mt-2 text-[11px] font-bold text-neutral-500 dark:text-white/50">
+                      Category: ${escapeHTML(w.category)}
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <button
+                      class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                      onclick="speakWord('${escapeQuotes(w.en)}')"
+                      aria-label="Speak"
+                      title="Speak"
+                    >
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+
+                    <button
+                      class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                      onclick="toggleFavorite('${escapeQuotes(id)}')"
+                      aria-label="Favorite"
+                      title="Favorite"
+                    >
+                      <i class="fa-${fav ? "solid" : "regular"} fa-star ${fav ? "text-yellow-500" : ""}"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button class="speak-btn" onclick="speakWord('${word.en.replace(/'/g, "\\'")}')">
-                <i class="fas fa-volume-up"></i>
-              </button>
-            </div>
-          </div>
-        `).join('');
+            `;
+          })
+          .join("");
       }
 
       function filterMemorization(category) {
         appSettings.memorizationCategory = category;
-        document.querySelectorAll('#categoryFilter .category-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
         loadWords();
       }
 
-      // Voice function
-      function speakWord(text) {
-        speechSynthesis.cancel();
-        
-        setTimeout(() => {
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = "en-US";
-
-          switch (appSettings.voice) {
-            case "male":
-              utterance.rate = 0.9;
-              utterance.pitch = 0.7;
-              break;
-            case "child":
-              utterance.rate = 0.8;
-              utterance.pitch = 1.5;
-              break;
-            case "slow":
-              utterance.rate = 0.6;
-              utterance.pitch = 1.0;
-              break;
-            default: // female
-              utterance.rate = 0.9;
-              utterance.pitch = 1.2;
-          }
-
-          utterance.volume = 1.0;
-          speechSynthesis.speak(utterance);
-        }, 100);
-      }
-
-      function changeVoice(voice) {
-        appSettings.voice = voice;
-        
-        document.querySelectorAll(".voice-btn").forEach((btn) => {
-          btn.classList.remove("active");
-          if (btn.textContent.toLowerCase().includes(voice)) {
-            btn.classList.add("active");
-          }
-        });
-      }
-
-      // Quiz functionality
+      /* =========================
+         QUIZ
+      ========================== */
       function resetQuiz() {
         quizScore = 0;
         quizTotal = 0;
         document.getElementById("scoreValue").textContent = "0";
         document.getElementById("totalValue").textContent = "0";
         document.getElementById("quizProgress").style.width = "0%";
+        document.getElementById("feedback").textContent = "";
+        document.getElementById("feedback").classList.remove("text-green-600", "text-red-600");
         document.getElementById("nextButton").style.display = "block";
       }
 
       function nextQuestion() {
-        const nextButton = document.getElementById("nextButton");
-        nextButton.style.display = "none";
-        document.getElementById("feedback").textContent = "";
-        document.getElementById("feedback").style.color = "#333";
+        const nextBtn = document.getElementById("nextButton");
+        nextBtn.style.display = "none";
+
+        const feedback = document.getElementById("feedback");
+        feedback.textContent = "";
+        feedback.classList.remove("text-green-600", "text-red-600");
 
         const isEnglishToUzbek = Math.random() < 0.5;
-        
-        // Filter words by category
-        const filteredWords = appSettings.quizCategory === "all" 
-          ? words 
-          : words.filter(word => word.category === appSettings.quizCategory);
-        
-        if (filteredWords.length === 0) {
+
+        const pool =
+          appSettings.quizCategory === "all"
+            ? words
+            : words.filter((w) => w.category === appSettings.quizCategory);
+
+        if (!pool.length) {
           document.getElementById("questionText").textContent = "No words in this category";
           document.getElementById("optionsContainer").innerHTML = "";
+          nextBtn.style.display = "block";
           return;
         }
 
-        const correctWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
-
-        document.getElementById("questionText").textContent = isEnglishToUzbek
-          ? correctWord.en
-          : correctWord.uz;
+        const correctWord = pool[Math.floor(Math.random() * pool.length)];
+        document.getElementById("questionText").textContent = isEnglishToUzbek ? correctWord.en : correctWord.uz;
 
         let options = [correctWord];
         while (options.length < 4) {
-          const randomWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
-          if (!options.some((opt) => opt.en === randomWord.en)) {
-            options.push(randomWord);
-          }
+          const r = pool[Math.floor(Math.random() * pool.length)];
+          if (!options.some((o) => o.en === r.en)) options.push(r);
         }
-
         options.sort(() => Math.random() - 0.5);
 
-        document.getElementById("optionsContainer").innerHTML = options.map((option) => `
-          <div class="opt" onclick="selectAnswer(this, '${option.en}', '${correctWord.en}', ${isEnglishToUzbek})">
-            ${isEnglishToUzbek ? option.uz : option.en}
-          </div>
-        `).join("");
+        document.getElementById("optionsContainer").innerHTML = options
+          .map((opt) => {
+            return `
+              <button
+                class="opt-btn w-full rounded-2xl border border-neutral-200 bg-white px-4 py-4 text-left text-sm font-extrabold text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99]
+                       disabled:opacity-60 disabled:active:scale-100 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                onclick="selectAnswer(this, '${escapeQuotes(opt.en)}', '${escapeQuotes(correctWord.en)}', ${isEnglishToUzbek})"
+              >
+                ${isEnglishToUzbek ? escapeHTML(opt.uz) : escapeHTML(opt.en)}
+              </button>
+            `;
+          })
+          .join("");
 
-        document.getElementById("quizProgress").style.width = `${(quizTotal / 10) * 100}%`;
+        document.getElementById("quizProgress").style.width = `${Math.min(100, (quizTotal / 10) * 100)}%`;
       }
 
-      function selectAnswer(element, selectedAnswer, correctAnswer, isEnglishToUzbek) {
+      function selectAnswer(el, selectedEn, correctEn, isEnglishToUzbek) {
         quizTotal++;
         document.getElementById("totalValue").textContent = quizTotal;
 
-        if (selectedAnswer === correctAnswer) {
+        const feedback = document.getElementById("feedback");
+
+        if (selectedEn === correctEn) {
           quizScore++;
           document.getElementById("scoreValue").textContent = quizScore;
-          element.classList.add("correct");
-          document.getElementById("feedback").textContent = "Correct!";
-          document.getElementById("feedback").style.color = "#28a745";
-          speakWord(correctAnswer);
+          el.classList.add("border-green-500");
+          feedback.textContent = "✅ Correct!";
+          feedback.classList.add("text-green-600");
+          speakWord(correctEn);
         } else {
-          element.classList.add("wrong");
+          el.classList.add("border-red-500");
+
           const correctTranslation = isEnglishToUzbek
-            ? words.find((w) => w.en === correctAnswer).uz
-            : correctAnswer;
-          document.getElementById("feedback").textContent = `Correct: ${correctTranslation}`;
-          document.getElementById("feedback").style.color = "#dc3545";
-          
-          document.querySelectorAll(".opt").forEach((opt) => {
-            const optText = opt.textContent.trim();
-            const correctOptText = isEnglishToUzbek
-              ? words.find((w) => w.en === correctAnswer).uz
-              : correctAnswer;
-            if (optText === correctOptText) {
-              opt.classList.add("correct");
-            }
+            ? (words.find((w) => w.en === correctEn)?.uz || correctEn)
+            : correctEn;
+
+          feedback.textContent = `❌ Correct: ${correctTranslation}`;
+          feedback.classList.add("text-red-600");
+
+          // mark correct option
+          document.querySelectorAll(".opt-btn").forEach((btn) => {
+            const t = btn.textContent.trim();
+            if (t === correctTranslation) btn.classList.add("border-green-500");
           });
         }
 
-        document.querySelectorAll(".opt").forEach((opt) => {
-          opt.style.pointerEvents = "none";
-        });
-
+        document.querySelectorAll(".opt-btn").forEach((btn) => (btn.disabled = true));
         document.getElementById("nextButton").style.display = "block";
-        document.getElementById("quizProgress").style.width = `${(quizTotal / 10) * 100}%`;
+        document.getElementById("quizProgress").style.width = `${Math.min(100, (quizTotal / 10) * 100)}%`;
       }
 
-      // Speaking practice - TO'G'IRLANGAN
-      let currentSpeakingWords = [];
-      let speakingIndex = 0;
+      /* =========================
+         SPEAKING
+      ========================== */
+      function giveHint() {
+        if (currentWord) speakWord(currentWord.en);
+      }
 
       function nextSpeakingWord() {
-        const filteredWords = appSettings.speakingCategory === "all" 
-          ? words 
-          : words.filter(word => word.category === appSettings.speakingCategory);
-        
-        if (filteredWords.length === 0) {
-          document.getElementById("uzWord").textContent = "No words in this category";
-          document.getElementById("speakingResult").textContent = "";
-          document.getElementById("nextWordButton").style.display = "none";
+        const pool =
+          appSettings.speakingCategory === "all"
+            ? words
+            : words.filter((w) => w.category === appSettings.speakingCategory);
+
+        const uzEl = document.getElementById("uzWord");
+        const resEl = document.getElementById("speakingResult");
+        const mic = document.getElementById("micButton");
+        const nextBtn = document.getElementById("nextWordButton");
+
+        if (!pool.length) {
+          uzEl.textContent = "No words in this category";
+          resEl.textContent = "";
+          nextBtn.classList.add("hidden");
           return;
         }
 
-        // Yangi so'z tanlash
-        currentWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
+        currentWord = pool[Math.floor(Math.random() * pool.length)];
+        uzEl.textContent = currentWord.uz;
 
-        document.getElementById("uzWord").textContent = currentWord.uz;
-        document.getElementById("speakingResult").textContent = "Tap microphone and say the word";
-        document.getElementById("speakingResult").style.color = "#333";
-        document.getElementById("micButton").classList.remove("listening");
-        document.getElementById("nextWordButton").style.display = "none";
+        resEl.textContent = "Tap microphone and say the word";
+        resEl.classList.remove("text-green-600", "text-red-600");
+
+        nextBtn.classList.add("hidden");
+        mic.classList.remove("ring-4", "ring-neutral-300", "dark:ring-white/20");
 
         if (recognition) {
-          try {
-            recognition.stop();
-          } catch (e) {}
+          try { recognition.stop(); } catch (e) {}
         }
         isListening = false;
       }
 
-      function giveHint() {
-        if (currentWord) {
-          speakWord(currentWord.en);
-        }
-      }
-
-      // Microphone functionality - TO'G'IRLANGAN
-      document.getElementById("micButton").addEventListener("click", function () {
+      document.getElementById("micButton").addEventListener("click", () => {
         if (isListening) {
           stopListening();
           return;
@@ -1580,216 +1370,126 @@
       });
 
       function startListening() {
-        if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-          alert("Speech recognition is not supported in your browser. Please use Chrome or Edge.");
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) {
+          alert("Speech recognition is not supported. Use Chrome/Edge.");
           return;
         }
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
+        recognition = new SR();
         recognition.lang = "en-US";
         recognition.continuous = false;
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
-        recognition.onstart = function () {
+        const mic = document.getElementById("micButton");
+        const resEl = document.getElementById("speakingResult");
+
+        recognition.onstart = () => {
           isListening = true;
-          document.getElementById("micButton").classList.add("listening");
-          document.getElementById("speakingResult").textContent = "Listening... Speak now";
-          document.getElementById("speakingResult").style.color = "#333";
+          mic.classList.add("ring-4", "ring-neutral-300", "dark:ring-white/20");
+          resEl.textContent = "Listening... Speak now";
+          resEl.classList.remove("text-green-600", "text-red-600");
         };
 
-        recognition.onresult = function (event) {
-          const result = event.results[0][0];
-          const spokenText = result.transcript.trim().toLowerCase();
-          const correctAnswer = currentWord.en.toLowerCase();
-          
-          console.log("Spoken:", spokenText);
-          console.log("Correct:", correctAnswer);
-          
-          // Kengaytirilgan tekshirish
-          let isCorrect = false;
-          
-          // 1. Aniq mos kelish
-          if (spokenText === correctAnswer) {
-            isCorrect = true;
-          }
-          // 2. Harflarni almashtirish (e.g., "wat" for "what")
-          else if (levenshteinDistance(spokenText, correctAnswer) <= 2) {
-            isCorrect = true;
-          }
-          // 3. So'zlar bo'yicha tekshirish
+        recognition.onresult = (event) => {
+          const spoken = event.results[0][0].transcript.trim().toLowerCase();
+          const correct = (currentWord?.en || "").toLowerCase();
+
+          let ok = false;
+          if (spoken === correct) ok = true;
+          else if (levenshteinDistance(spoken, correct) <= 2) ok = true;
           else {
-            const spokenWords = spokenText.split(/\s+/);
-            const correctWords = correctAnswer.split(/\s+/);
-            
-            if (spokenWords.length === correctWords.length) {
-              let matchCount = 0;
-              for (let i = 0; i < spokenWords.length; i++) {
-                if (levenshteinDistance(spokenWords[i], correctWords[i]) <= 1) {
-                  matchCount++;
-                }
+            const s = spoken.split(/\s+/);
+            const c = correct.split(/\s+/);
+            if (s.length === c.length) {
+              let match = 0;
+              for (let i = 0; i < s.length; i++) {
+                if (levenshteinDistance(s[i], c[i]) <= 1) match++;
               }
-              isCorrect = matchCount / correctWords.length >= 0.8;
+              ok = match / c.length >= 0.8;
             }
           }
 
-          if (isCorrect) {
-            document.getElementById("speakingResult").textContent = "✅ Perfect! Correct pronunciation!";
-            document.getElementById("speakingResult").style.color = "#28a745";
+          if (ok) {
+            resEl.textContent = "✅ Perfect! Correct pronunciation!";
+            resEl.classList.add("text-green-600");
             speakWord("Excellent!");
-            
-            // 2 sekunddan keyin yangi so'z
-            setTimeout(() => {
-              nextSpeakingWord();
-            }, 2000);
+
+            setTimeout(() => nextSpeakingWord(), 1200);
           } else {
-            document.getElementById("speakingResult").textContent = `❌ Try again. You said: "${spokenText}"`;
-            document.getElementById("speakingResult").style.color = "#dc3545";
-            
-            // Qayta urinish uchun ruxsat
+            resEl.textContent = `❌ Try again. You said: "${spoken}"`;
+            resEl.classList.add("text-red-600");
+
             setTimeout(() => {
-              document.getElementById("speakingResult").textContent = "Try again. Tap microphone";
-              isListening = false;
-              document.getElementById("micButton").classList.remove("listening");
-            }, 2000);
+              resEl.textContent = "Try again. Tap microphone";
+              stopListening();
+            }, 1400);
           }
         };
 
-        recognition.onerror = function (event) {
-          console.log("Speech recognition error:", event.error);
-          if (event.error === "no-speech") {
-            document.getElementById("speakingResult").textContent = "No speech detected. Try again.";
-          } else if (event.error === "audio-capture") {
-            document.getElementById("speakingResult").textContent = "No microphone found.";
-          } else if (event.error === "not-allowed") {
-            document.getElementById("speakingResult").textContent = "Microphone permission denied.";
-          } else {
-            document.getElementById("speakingResult").textContent = "Error occurred. Try again.";
-          }
-          document.getElementById("speakingResult").style.color = "#dc3545";
+        recognition.onerror = (event) => {
+          const resEl = document.getElementById("speakingResult");
+          resEl.classList.add("text-red-600");
+
+          if (event.error === "no-speech") resEl.textContent = "No speech detected. Try again.";
+          else if (event.error === "audio-capture") resEl.textContent = "No microphone found.";
+          else if (event.error === "not-allowed") resEl.textContent = "Microphone permission denied.";
+          else resEl.textContent = "Error occurred. Try again.";
+
           stopListening();
         };
 
-        recognition.onend = function () {
-          stopListening();
-        };
+        recognition.onend = () => stopListening();
 
         try {
           recognition.start();
-        } catch (error) {
-          console.log("Recognition start error:", error);
+        } catch (e) {
           document.getElementById("speakingResult").textContent = "Error starting recognition";
-          document.getElementById("speakingResult").style.color = "#dc3545";
-          isListening = false;
-          document.getElementById("micButton").classList.remove("listening");
+          stopListening();
         }
-      }
-
-      // Levenshtein distance for better matching
-      function levenshteinDistance(a, b) {
-        if (a.length === 0) return b.length;
-        if (b.length === 0) return a.length;
-
-        const matrix = [];
-
-        for (let i = 0; i <= b.length; i++) {
-          matrix[i] = [i];
-        }
-
-        for (let j = 0; j <= a.length; j++) {
-          matrix[0][j] = j;
-        }
-
-        for (let i = 1; i <= b.length; i++) {
-          for (let j = 1; j <= a.length; j++) {
-            if (b.charAt(i - 1) === a.charAt(j - 1)) {
-              matrix[i][j] = matrix[i - 1][j - 1];
-            } else {
-              matrix[i][j] = Math.min(
-                matrix[i - 1][j - 1] + 1,
-                matrix[i][j - 1] + 1,
-                matrix[i - 1][j] + 1
-              );
-            }
-          }
-        }
-
-        return matrix[b.length][a.length];
       }
 
       function stopListening() {
         if (recognition) {
-          try {
-            recognition.stop();
-          } catch (e) {}
+          try { recognition.stop(); } catch (e) {}
         }
         isListening = false;
-        document.getElementById("micButton").classList.remove("listening");
+        document.getElementById("micButton").classList.remove("ring-4", "ring-neutral-300", "dark:ring-white/20");
       }
 
-      // Settings functions
-      function changeTheme(theme) {
-        appSettings.theme = theme;
-        
-        document.querySelectorAll(".theme-btn").forEach((btn) => {
-          btn.classList.remove("active");
-          if (btn.textContent.toLowerCase().includes(theme)) {
-            btn.classList.add("active");
+      function levenshteinDistance(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1];
+            else matrix[i][j] = Math.min(
+              matrix[i - 1][j - 1] + 1,
+              matrix[i][j - 1] + 1,
+              matrix[i - 1][j] + 1
+            );
           }
-        });
-
-        if (theme === "dark") {
-          document.body.classList.add("dark-theme");
-          document.body.style.background = "#121212";
-        } else {
-          document.body.classList.remove("dark-theme");
-          document.body.style.background = "#667eea";
         }
+        return matrix[b.length][a.length];
       }
 
-      function changeColor(color) {
-        appSettings.color = color;
-        
-        document.querySelectorAll(".color-option").forEach((opt) => opt.classList.remove("active"));
-        event.target.classList.add("active");
+      /* =========================
+         INIT
+      ========================== */
+      window.onload = () => {
+        // load theme/voice
+        const savedTheme = localStorage.getItem(LS_THEME);
+        const savedVoice = localStorage.getItem(LS_VOICE);
 
-        const darkColor = darkenColor(color, 20);
-        document.querySelectorAll("header").forEach((header) => {
-          header.style.background = `linear-gradient(135deg, ${color}, ${darkColor})`;
-        });
-        
-        document.querySelectorAll(".speak-btn, .home-btn, .next-btn, .hint-btn, .mic-btn").forEach((btn) => {
-          btn.style.background = color;
-        });
-        
-        document.querySelectorAll(".word-card, .voice-panel, .settings-item, .progress-bar").forEach((el) => {
-          el.style.borderLeftColor = color;
-        });
-        
-        document.querySelectorAll(".voice-btn.active, .theme-btn.active, .category-btn.active").forEach((btn) => {
-          btn.style.background = color;
-          btn.style.borderColor = color;
-        });
-      }
+        if (savedTheme === "light" || savedTheme === "dark") appSettings.theme = savedTheme;
+        if (savedVoice) appSettings.voice = savedVoice;
 
-      function darkenColor(color, percent) {
-        const num = parseInt(color.replace("#", ""), 16);
-        const amt = Math.round(2.55 * percent);
-        const R = (num >> 16) - amt;
-        const G = ((num >> 8) & 0x00ff) - amt;
-        const B = (num & 0x0000ff) - amt;
-        return "#" + (
-          0x1000000 +
-          (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
-          (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
-          (B < 255 ? (B < 1 ? 0 : B) : 255)
-        ).toString(16).slice(1);
-      }
-
-      // Initialize the app
-      window.onload = function () {
-        loadWords();
+        applyTheme();
+        renderVoiceButtons();
       };
     </script>
   </body>
