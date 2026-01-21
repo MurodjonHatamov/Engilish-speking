@@ -1,0 +1,23 @@
+{
+    "name": "English Learner",
+    "short_name": "English",
+    "description": "Learn English words, quiz and speaking",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0a0a0a",
+    "orientation": "portrait",
+    "icons": [
+      {
+        "src": "./logotip192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "./logotip.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  

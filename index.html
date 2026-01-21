@@ -4,10 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>English Learner</title>
-
+    <link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="English Learner">
     <!-- Tailwind CDN (OK for demo; warning is normal) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="./imgs/logotip.png">
+    <link rel="icon" type="image/png" href="./imgs/logotip512.png">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -183,7 +187,14 @@
               </div>
             </button>
           </div>
-
+          <button
+          id="installBtn"
+          class="hidden mt-4 w-full rounded-2xl px-4 py-4 text-sm font-extrabold
+                 bg-black text-white transition active:scale-[0.98]
+                 dark:bg-white dark:text-black">
+          📲 Ilovani yuklab olish
+        </button>
+        
           <div class="mt-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
             <div class="font-extrabold text-neutral-900 dark:text-white">Premium UX tips</div>
             <ul class="mt-2 list-disc space-y-1 pl-4">
@@ -516,6 +527,49 @@
     </div>
 
     <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js");
+    });
+  }
+  let deferredPrompt = null;
+  const installBtn = document.getElementById("installBtn");
+
+  // Brauzer install qilishga tayyor bo‘lsa
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault(); // default banner chiqmasin
+    deferredPrompt = e;
+
+    if (installBtn) {
+      installBtn.classList.remove("hidden");
+    }
+  });
+
+  // Tugma bosilganda
+  if (installBtn) {
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+
+      deferredPrompt.prompt(); // install oynasi
+      const choice = await deferredPrompt.userChoice;
+
+      if (choice.outcome === "accepted") {
+        console.log("User installed the app");
+      }
+
+      deferredPrompt = null;
+      installBtn.classList.add("hidden");
+    });
+  }
+
+  // App allaqachon o‘rnatilgan bo‘lsa
+  window.addEventListener("appinstalled", () => {
+    if (installBtn) {
+      installBtn.classList.add("hidden");
+    }
+  });
+
+
 
 
 const banner = document.getElementById("offlineBanner");
