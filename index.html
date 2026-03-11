@@ -5,198 +5,267 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>English Learner</title>
     <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#0a0a0a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="English Learner">
-    <!-- Tailwind CDN (OK for demo; warning is normal) -->
+    <meta name="theme-color" content="#1a56db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="English Learner">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="./imgs/logotip512.png">
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
     <script>
       tailwind.config = { darkMode: "class" };
     </script>
 
     <style>
-      /* ===== Must-have for screen navigation ===== */
+      /* ===== Screen navigation ===== */
       .screen, .category-selection { display: none; }
       .screen.active, .category-selection.active { display: flex; }
 
-      /* Small UX */
+      /* Scrollbar */
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       button, a, .tap { -webkit-tap-highlight-color: transparent; }
       mark.hl { padding: 0 .12rem; border-radius: .25rem; }
 
+      /* ===== Royal Blue gradient header ===== */
+      .blue-header {
+        background: linear-gradient(135deg, #1a56db 0%, #1e40af 60%, #1d4ed8 100%);
+      }
 
+      /* ===== Flashcard 3D flip ===== */
+      .flashcard-scene {
+        perspective: 900px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+      }
+      .flashcard-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.55s cubic-bezier(0.4,0.2,0.2,1);
+        transform-style: preserve-3d;
+      }
+      .flashcard-scene.flipped .flashcard-inner {
+        transform: rotateY(180deg);
+      }
+      .flashcard-front, .flashcard-back {
+        position: absolute;
+        width: 100%;
+        min-height: 180px;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+      }
+      .flashcard-back {
+        transform: rotateY(180deg);
+      }
 
-  /* fallback when tailwind isn't loaded */
-  #offlineBanner.fallback{
-    position:fixed; top:12px; left:50%; transform:translateX(-50%);
-    z-index:9999; width:min(520px,92%);
-    background:#fff; color:#111;
-    border:1px solid rgba(239,68,68,.25);
-    border-radius:16px;
-    box-shadow:0 12px 30px rgba(0,0,0,.15);
-    padding:12px 14px;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-  #offlineBanner.fallback .row{display:flex; align-items:center; gap:12px;}
-  #offlineBanner.fallback .ico{
-    width:36px;height:36px;border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(239,68,68,.08); color:#ef4444;
-  }
-  #offlineBanner.fallback .t1{font-weight:800; color:#ef4444; font-size:14px;}
-  #offlineBanner.fallback .t2{font-size:12px; color:rgba(17,17,17,.70); margin-top:2px;}
-  #offlineBanner.fallback .x{
-    margin-left:auto; width:36px;height:36px;border-radius:12px;
-    border:1px solid rgba(0,0,0,.10);
-    background:#fff; cursor:pointer;
-  }
+      /* ===== Offline banner fallback ===== */
+      #offlineBanner.fallback {
+        position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+        z-index: 9999; width: min(520px, 92%);
+        background: #fff; color: #111;
+        border: 1px solid rgba(239,68,68,.25);
+        border-radius: 16px;
+        box-shadow: 0 12px 30px rgba(0,0,0,.15);
+        padding: 12px 14px;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+      #offlineBanner.fallback .row { display: flex; align-items: center; gap: 12px; }
+      #offlineBanner.fallback .ico {
+        width: 36px; height: 36px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(239,68,68,.08); color: #ef4444;
+      }
+      #offlineBanner.fallback .t1 { font-weight: 800; color: #ef4444; font-size: 14px; }
+      #offlineBanner.fallback .t2 { font-size: 12px; color: rgba(17,17,17,.70); margin-top: 2px; }
+      #offlineBanner.fallback .x {
+        margin-left: auto; width: 36px; height: 36px; border-radius: 12px;
+        border: 1px solid rgba(0,0,0,.10); background: #fff; cursor: pointer;
+      }
 
+      /* Blue accent elements */
+      .blue-btn-primary {
+        background: linear-gradient(135deg, #1a56db, #1e40af);
+        color: #fff;
+      }
+      .blue-btn-primary:active { opacity: 0.85; }
 
-      
+      .blue-chip-active {
+        background: linear-gradient(135deg, #1a56db, #1e40af);
+        border-color: #1a56db;
+        color: #fff;
+      }
+
+      /* Soft card style */
+      .soft-card {
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px rgba(26,86,219,.08), 0 1px 4px rgba(0,0,0,.06);
+      }
+
+      /* Nav icon card style */
+      .nav-icon-card {
+        background: rgba(26,86,219,.08);
+        color: #1a56db;
+        border-radius: 1rem;
+      }
+      .dark .nav-icon-card {
+        background: rgba(96,165,250,.12);
+        color: #60a5fa;
+      }
+
+      /* Progress bar blue */
+      .blue-progress {
+        background: linear-gradient(90deg, #1a56db, #3b82f6);
+      }
+
+      /* Slate gray text */
+      .slate-sub { color: #64748b; }
+      .dark .slate-sub { color: rgba(255,255,255,.55); }
     </style>
   </head>
 
-  <body class="h-full bg-neutral-100 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
+  <body class="h-full bg-slate-100 text-slate-900 dark:bg-neutral-950 dark:text-neutral-50">
+
+    <!-- Offline Banner -->
     <div id="offlineBanner"
-     class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[9999] w-[92%] max-w-[520px]
-            rounded-2xl border border-red-200 bg-white px-4 py-3 shadow-lg
-            dark:border-red-500/30 dark:bg-neutral-900">
-  <div class="flex items-center gap-3">
-    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400">
-      <i class="fa-solid fa-wifi"></i>
+         class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[9999] w-[92%] max-w-[520px]
+                rounded-2xl border border-red-200 bg-white px-4 py-3 shadow-lg
+                dark:border-red-500/30 dark:bg-neutral-900">
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400">
+          <i class="fa-solid fa-wifi"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-sm font-extrabold text-red-600 dark:text-red-400">Internetda muammo</div>
+          <div class="text-xs text-neutral-600 dark:text-white/70">Internetni yoqing va qayta urinib ko'ring.</div>
+        </div>
+        <button onclick="hideOfflineBanner()"
+                class="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200
+                       bg-white text-neutral-700 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
-    <div class="min-w-0">
-      <div class="text-sm font-extrabold text-red-600 dark:text-red-400">Internetda muammo</div>
-      <div class="text-xs text-neutral-600 dark:text-white/70">Internetni yoqing va qayta urinib ko‘ring.</div>
-    </div>
-    <button onclick="hideOfflineBanner()"
-            class="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200
-                   bg-white text-neutral-700 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-  </div>
-</div>
 
     <!-- App shell -->
-    <div class="mx-auto h-full w-full max-w-[540px] overflow-hidden border border-neutral-200 bg-white shadow-[0_24px_80px_rgba(0,0,0,.22)] dark:border-white/10 dark:bg-neutral-900">
+    <div class="mx-auto h-full w-full max-w-[540px] overflow-hidden border border-slate-200 bg-white shadow-[0_24px_80px_rgba(0,0,0,.18)] dark:border-white/10 dark:bg-neutral-900">
+
       <!-- ============ HOME ============ -->
       <section id="home" class="screen active h-full flex-col">
-        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
-          <div class="flex items-center justify-between px-4 py-3">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
             <div class="min-w-0">
               <div class="flex items-center gap-2">
-                <span class="h-2.5 w-2.5 rounded-full bg-neutral-900 dark:bg-white"></span>
-                <h1 class="truncate text-[15px] font-extrabold tracking-tight">English Learner</h1>
+                <span class="h-2.5 w-2.5 rounded-full bg-white opacity-90"></span>
+                <h1 class="truncate text-[16px] font-extrabold tracking-tight text-white">English Learner</h1>
               </div>
-              <p class="truncate text-xs text-neutral-500 dark:text-white/60">Premium black & white • fast & clean</p>
+              <p class="truncate text-xs text-blue-100 mt-0.5">Royal Blue • Fast & Clean</p>
             </div>
-
             <div class="flex items-center gap-2">
               <button
-                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-                onclick="toggleTheme()"
-                aria-label="Toggle theme"
-                title="Theme"
-              >
+                class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95 backdrop-blur"
+                onclick="toggleTheme()" aria-label="Toggle theme">
                 <i class="fa-solid fa-moon hidden dark:inline"></i>
                 <i class="fa-solid fa-sun inline dark:hidden"></i>
               </button>
-
               <button
-                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-                onclick="showScreen('settings')"
-                aria-label="Settings"
-                title="Settings"
-              >
+                class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95 backdrop-blur"
+                onclick="showScreen('settings')" aria-label="Settings">
                 <i class="fa-solid fa-gear"></i>
               </button>
             </div>
           </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto px-4 py-4">
+        <main class="flex-1 overflow-y-auto px-4 py-5">
           <div class="grid gap-3">
+
+            <!-- Word Memorization -->
             <button
-              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
-              onclick="showCategorySelection('memorize')"
-            >
-              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
-                <i class="fa-solid fa-book-open"></i>
+              class="soft-card group flex items-center gap-4 border border-slate-200 bg-white p-4 text-left transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-800"
+              onclick="showCategorySelection('memorize')">
+              <div class="nav-icon-card flex h-12 w-12 items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-book-open text-lg"></i>
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <div class="text-sm font-extrabold tracking-tight">Word Memorization</div>
-                <div class="text-xs text-neutral-500 dark:text-white/60">Search • ⭐ Favorites • Pronunciation</div>
+                <div class="text-xs slate-sub mt-0.5">Search • ⭐ Favorites • Pronunciation</div>
               </div>
-              <div class="ml-auto text-neutral-400 dark:text-white/40">
-                <i class="fa-solid fa-chevron-right"></i>
-              </div>
+              <i class="fa-solid fa-chevron-right text-slate-300 dark:text-white/30"></i>
             </button>
 
+            <!-- Flashcards -->
             <button
-              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
-              onclick="showCategorySelection('quiz')"
-            >
-              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
-                <i class="fa-solid fa-pen-to-square"></i>
+              class="soft-card group flex items-center gap-4 border border-slate-200 bg-white p-4 text-left transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-800"
+              onclick="showCategorySelection('flashcards')">
+              <div class="nav-icon-card flex h-12 w-12 items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-layer-group text-lg"></i>
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
+                <div class="text-sm font-extrabold tracking-tight">Flashcards</div>
+                <div class="text-xs slate-sub mt-0.5">Flip cards • Topdim / Bilmadim</div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-slate-300 dark:text-white/30"></i>
+            </button>
+
+            <!-- Practice Quiz -->
+            <button
+              class="soft-card group flex items-center gap-4 border border-slate-200 bg-white p-4 text-left transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-800"
+              onclick="showCategorySelection('quiz')">
+              <div class="nav-icon-card flex h-12 w-12 items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-pen-to-square text-lg"></i>
+              </div>
+              <div class="min-w-0 flex-1">
                 <div class="text-sm font-extrabold tracking-tight">Practice Quiz</div>
-                <div class="text-xs text-neutral-500 dark:text-white/60">4 options • instant feedback</div>
+                <div class="text-xs slate-sub mt-0.5">4 options • instant feedback</div>
               </div>
-              <div class="ml-auto text-neutral-400 dark:text-white/40">
-                <i class="fa-solid fa-chevron-right"></i>
-              </div>
+              <i class="fa-solid fa-chevron-right text-slate-300 dark:text-white/30"></i>
             </button>
 
+            <!-- Speaking Practice -->
             <button
-              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
-              onclick="showCategorySelection('speaking')"
-            >
-              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
-                <i class="fa-solid fa-microphone"></i>
+              class="soft-card group flex items-center gap-4 border border-slate-200 bg-white p-4 text-left transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-800"
+              onclick="showCategorySelection('speaking')">
+              <div class="nav-icon-card flex h-12 w-12 items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-microphone text-lg"></i>
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <div class="text-sm font-extrabold tracking-tight">Speaking Practice</div>
-                <div class="text-xs text-neutral-500 dark:text-white/60">Mic • smart matching</div>
+                <div class="text-xs slate-sub mt-0.5">Mic • smart matching</div>
               </div>
-              <div class="ml-auto text-neutral-400 dark:text-white/40">
-                <i class="fa-solid fa-chevron-right"></i>
-              </div>
+              <i class="fa-solid fa-chevron-right text-slate-300 dark:text-white/30"></i>
             </button>
 
+            <!-- Settings -->
             <button
-              class="group flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
-              onclick="showScreen('settings')"
-            >
-              <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
-                <i class="fa-solid fa-sliders"></i>
+              class="soft-card group flex items-center gap-4 border border-slate-200 bg-white p-4 text-left transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-800"
+              onclick="showScreen('settings')">
+              <div class="nav-icon-card flex h-12 w-12 items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-sliders text-lg"></i>
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <div class="text-sm font-extrabold tracking-tight">Settings</div>
-                <div class="text-xs text-neutral-500 dark:text-white/60">Theme • voice • data</div>
+                <div class="text-xs slate-sub mt-0.5">Theme • voice • data</div>
               </div>
-              <div class="ml-auto text-neutral-400 dark:text-white/40">
-                <i class="fa-solid fa-chevron-right"></i>
-              </div>
+              <i class="fa-solid fa-chevron-right text-slate-300 dark:text-white/30"></i>
             </button>
           </div>
-          <button
-          id="installBtn"
-          class="hidden mt-4 w-full rounded-2xl px-4 py-4 text-sm font-extrabold
-                 bg-black text-white transition active:scale-[0.98]
-                 dark:bg-white dark:text-black">
-          📲 Ilovani yuklab olish
-        </button>
-        
-          <div class="mt-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
-            <div class="font-extrabold text-neutral-900 dark:text-white">Premium UX tips</div>
+
+          <button id="installBtn"
+            class="hidden mt-4 w-full rounded-3xl px-4 py-4 text-sm font-extrabold blue-btn-primary transition active:scale-[0.98]">
+            📲 Ilovani yuklab olish
+          </button>
+
+          <div class="mt-5 soft-card border border-slate-200 bg-slate-50 p-4 text-xs slate-sub dark:border-white/10 dark:bg-white/5">
+            <div class="font-extrabold text-slate-900 dark:text-white">Premium UX tips</div>
             <ul class="mt-2 list-disc space-y-1 pl-4">
               <li>Search english/uzbek/pron.</li>
               <li>⭐ favorites are saved on your phone.</li>
@@ -208,34 +277,25 @@
 
       <!-- ============ CATEGORY SELECTION ============ -->
       <section id="categorySelection" class="category-selection h-full flex-col">
-        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
-          <div class="flex items-center justify-between px-4 py-3">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="showScreen('home')"
-              aria-label="Back"
-              title="Back"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="showScreen('home')" aria-label="Back">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
-
             <div class="min-w-0 text-center">
-              <div id="categoryTitle" class="truncate text-sm font-extrabold">Select Category</div>
-              <div class="text-xs text-neutral-500 dark:text-white/60">Pick a category to continue</div>
+              <div id="categoryTitle" class="truncate text-sm font-extrabold text-white">Select Category</div>
+              <div class="text-xs text-blue-100 mt-0.5">Pick a category to continue</div>
             </div>
-
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="toggleTheme()"
-              aria-label="Toggle theme"
-              title="Theme"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="toggleTheme()" aria-label="Toggle theme">
               <i class="fa-solid fa-moon hidden dark:inline"></i>
               <i class="fa-solid fa-sun inline dark:hidden"></i>
             </button>
           </div>
         </header>
-
         <div class="flex-1 overflow-y-auto px-4 py-4">
           <div id="categoryGrid" class="grid grid-cols-2 gap-3"></div>
         </div>
@@ -243,28 +303,20 @@
 
       <!-- ============ MEMORIZE ============ -->
       <section id="memorize" class="screen h-full flex-col">
-        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
-          <div class="flex items-center justify-between px-4 py-3">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="showScreen('home')"
-              aria-label="Back"
-              title="Back"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="showScreen('home')" aria-label="Back">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
-
             <div class="min-w-0 text-center">
-              <div class="truncate text-sm font-extrabold">Word Memorization</div>
-              <div class="text-xs text-neutral-500 dark:text-white/60">Search • ⭐ • 🔊</div>
+              <div class="truncate text-sm font-extrabold text-white">Word Memorization</div>
+              <div class="text-xs text-blue-100 mt-0.5">Search • ⭐ • 🔊</div>
             </div>
-
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="toggleTheme()"
-              aria-label="Toggle theme"
-              title="Theme"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="toggleTheme()" aria-label="Toggle theme">
               <i class="fa-solid fa-moon hidden dark:inline"></i>
               <i class="fa-solid fa-sun inline dark:hidden"></i>
             </button>
@@ -273,36 +325,30 @@
 
         <div class="flex-1 overflow-y-auto px-4 py-4">
           <!-- Search -->
-          <div class="rounded-2xl border border-neutral-200 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+          <div class="soft-card border border-slate-200 bg-white p-3 dark:border-white/10 dark:bg-neutral-800">
             <div class="flex items-center gap-2">
-              <div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 dark:border-white/10 dark:bg-white/5">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex-shrink-0">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </div>
-
               <input
                 id="searchInput"
-                class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm font-bold outline-none focus:ring-4 focus:ring-neutral-200 dark:border-white/10 dark:bg-neutral-900 dark:focus:ring-white/10"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold outline-none focus:ring-4 focus:ring-blue-100 dark:border-white/10 dark:bg-neutral-900 dark:focus:ring-blue-500/20"
                 placeholder="Search (english / uzbek / pron)..."
                 oninput="onSearchChange(this.value)"
                 autocomplete="off"
               />
-
               <button
-                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white transition active:scale-95 dark:border-white/10 dark:bg-neutral-900"
-                onclick="clearSearch()"
-                aria-label="Clear"
-                title="Clear"
-              >
+                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 flex-shrink-0"
+                onclick="clearSearch()" aria-label="Clear">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
           </div>
 
           <!-- Voice -->
-          <div class="mt-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
-            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold">
-              <i class="fa-solid fa-volume-high"></i>
-              Voice
+          <div class="mt-3 soft-card border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-neutral-800">
+            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold text-blue-700 dark:text-blue-400">
+              <i class="fa-solid fa-volume-high"></i> Voice
             </div>
             <div class="flex flex-wrap gap-2" id="voiceButtonsMemorize"></div>
           </div>
@@ -311,65 +357,148 @@
           <div class="mt-3 flex gap-2 overflow-x-auto pb-2 no-scrollbar" id="categoryFilter"></div>
 
           <!-- Counter -->
-          <div id="wordCounter" class="mt-2 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs font-extrabold text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"></div>
+          <div id="wordCounter" class="mt-2 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-extrabold slate-sub dark:border-white/10 dark:bg-neutral-800"></div>
 
           <!-- List -->
           <div id="wordList" class="mt-3 space-y-3"></div>
         </div>
       </section>
 
-      <!-- ============ QUIZ ============ -->
-      <section id="quiz" class="screen h-full flex-col">
-        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
-          <div class="flex items-center justify-between px-4 py-3">
+      <!-- ============ FLASHCARDS ============ -->
+      <section id="flashcards" class="screen h-full flex-col">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="showScreen('home')"
-              aria-label="Back"
-              title="Back"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="showScreen('home')" aria-label="Back">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
-
             <div class="min-w-0 text-center">
-              <div class="truncate text-sm font-extrabold">Practice Quiz</div>
-              <div class="text-xs text-neutral-500 dark:text-white/60">Category-based</div>
+              <div class="truncate text-sm font-extrabold text-white">Flashcards</div>
+              <div class="text-xs text-blue-100 mt-0.5">Bosing va aylanting</div>
             </div>
-
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="toggleTheme()"
-              aria-label="Toggle theme"
-              title="Theme"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="toggleTheme()" aria-label="Toggle theme">
               <i class="fa-solid fa-moon hidden dark:inline"></i>
               <i class="fa-solid fa-sun inline dark:hidden"></i>
             </button>
           </div>
         </header>
 
-        <div class="border-b border-neutral-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-neutral-900">
-          <div class="flex items-center justify-between text-xs font-extrabold">
-            <div>Score: <span id="scoreValue">0</span> / <span id="totalValue">0</span></div>
-            <div class="text-neutral-500 dark:text-white/60">Goal: 10</div>
+        <!-- Progress bar -->
+        <div class="border-b border-slate-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-neutral-900">
+          <div class="flex items-center justify-between text-xs font-extrabold mb-2">
+            <div>Topdim: <span id="fcKnown" class="text-blue-600 dark:text-blue-400">0</span></div>
+            <div class="slate-sub">Karta: <span id="fcIndex">1</span> / <span id="fcTotal">0</span></div>
+            <div>Bilmadim: <span id="fcUnknown" class="text-rose-500">0</span></div>
           </div>
-          <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-white/10">
-            <div id="quizProgress" class="h-full w-0 rounded-full bg-neutral-900 transition-all dark:bg-white"></div>
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+            <div id="fcProgress" class="h-full w-0 rounded-full blue-progress transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 py-6">
+          <div class="mx-auto flex max-w-md flex-col items-center gap-5">
+
+            <!-- Flashcard -->
+            <div class="flashcard-scene w-full" id="flashcardScene" onclick="flipCard()">
+              <div class="flashcard-inner" id="flashcardInner">
+                <!-- Front -->
+                <div class="flashcard-front border border-slate-200 bg-white dark:border-white/10 dark:bg-neutral-800">
+                  <div class="text-xs font-bold slate-sub mb-3 uppercase tracking-widest">Inglizcha</div>
+                  <div id="fcFrontWord" class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white"></div>
+                  <div id="fcFrontPron" class="mt-2 text-sm slate-sub"></div>
+                  <div class="mt-4 text-xs slate-sub">👆 Bosing — tarjimani ko'ring</div>
+                </div>
+                <!-- Back -->
+                <div class="flashcard-back border border-blue-200 bg-blue-50 dark:border-blue-500/30 dark:bg-blue-900/20">
+                  <div class="text-xs font-bold text-blue-500 mb-3 uppercase tracking-widest">O'zbekcha</div>
+                  <div id="fcBackWord" class="text-3xl font-extrabold tracking-tight text-blue-700 dark:text-blue-300"></div>
+                  <div id="fcBackEn" class="mt-2 text-sm text-blue-500"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hint speak -->
+            <button
+              class="inline-flex items-center gap-2 rounded-3xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold transition active:scale-95 dark:border-white/10 dark:bg-neutral-800"
+              onclick="speakWord(currentFlashcard?.en)">
+              <i class="fa-solid fa-volume-high text-blue-600"></i>
+              Talaffuzni eshiting
+            </button>
+
+            <!-- Topdim / Bilmadim buttons -->
+            <div id="fcButtons" class="flex w-full gap-3">
+              <button
+                class="flex-1 rounded-3xl border border-rose-200 bg-rose-50 py-4 text-sm font-extrabold text-rose-600 transition active:scale-[0.98] dark:border-rose-500/30 dark:bg-rose-900/20 dark:text-rose-400"
+                onclick="fcAnswer(false)">
+                ✗ Bilmadim
+              </button>
+              <button
+                class="flex-1 rounded-3xl blue-btn-primary py-4 text-sm font-extrabold transition active:scale-[0.98]"
+                onclick="fcAnswer(true)">
+                ✓ Topdim
+              </button>
+            </div>
+
+            <!-- Result card -->
+            <div id="fcResult" class="hidden w-full soft-card border border-slate-200 bg-white p-5 text-center dark:border-white/10 dark:bg-neutral-800">
+              <div class="text-2xl mb-2">🎉</div>
+              <div class="text-sm font-extrabold">Tugatdingiz!</div>
+              <div class="mt-1 text-xs slate-sub">
+                Topdim: <b class="text-blue-600" id="fcResultKnown">0</b> &nbsp;|&nbsp; Bilmadim: <b class="text-rose-500" id="fcResultUnknown">0</b>
+              </div>
+              <button class="mt-4 w-full rounded-3xl blue-btn-primary py-3 text-sm font-extrabold transition active:scale-[0.98]" onclick="startFlashcards()">
+                Qayta boshlash
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="quiz" class="screen h-full flex-col">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="showScreen('home')" aria-label="Back">
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="min-w-0 text-center">
+              <div class="truncate text-sm font-extrabold text-white">Practice Quiz</div>
+              <div class="text-xs text-blue-100 mt-0.5">Category-based</div>
+            </div>
+            <button
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="toggleTheme()" aria-label="Toggle theme">
+              <i class="fa-solid fa-moon hidden dark:inline"></i>
+              <i class="fa-solid fa-sun inline dark:hidden"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- Blue progress bar -->
+        <div class="border-b border-slate-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-neutral-900">
+          <div class="flex items-center justify-between text-xs font-extrabold mb-2">
+            <div>Score: <span id="scoreValue" class="text-blue-600 dark:text-blue-400">0</span> / <span id="totalValue">0</span></div>
+            <div class="slate-sub">Goal: 10</div>
+          </div>
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+            <div id="quizProgress" class="h-full w-0 rounded-full blue-progress transition-all duration-300"></div>
           </div>
         </div>
 
         <div class="flex-1 overflow-y-auto px-4 py-4">
-          <div id="questionText" class="rounded-2xl border border-neutral-200 bg-white p-5 text-center text-2xl font-extrabold tracking-tight shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900"></div>
-
+          <div id="questionText" class="soft-card border border-slate-200 bg-white p-5 text-center text-2xl font-extrabold tracking-tight dark:border-white/10 dark:bg-neutral-800"></div>
           <div id="optionsContainer" class="mt-3 grid gap-2"></div>
-
-          <div id="feedback" class="mt-3 min-h-[54px] rounded-2xl border border-neutral-200 bg-white p-3 text-center text-base font-extrabold text-neutral-700 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"></div>
-
+          <div id="feedback" class="mt-3 min-h-[54px] soft-card border border-slate-200 bg-white p-3 text-center text-base font-extrabold slate-sub dark:border-white/10 dark:bg-neutral-800"></div>
           <button
             id="nextButton"
-            class="mt-4 w-full rounded-2xl bg-neutral-900 px-4 py-4 text-sm font-extrabold text-white shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:bg-white dark:text-neutral-900"
-            onclick="nextQuestion()"
-          >
+            class="mt-4 w-full rounded-3xl blue-btn-primary px-4 py-4 text-sm font-extrabold transition active:scale-[0.99]"
+            onclick="nextQuestion()">
             Next →
           </button>
         </div>
@@ -377,28 +506,20 @@
 
       <!-- ============ SPEAKING ============ -->
       <section id="speaking" class="screen h-full flex-col">
-        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
-          <div class="flex items-center justify-between px-4 py-3">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="showScreen('home')"
-              aria-label="Back"
-              title="Back"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="showScreen('home')" aria-label="Back">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
-
             <div class="min-w-0 text-center">
-              <div class="truncate text-sm font-extrabold">Speaking Practice</div>
-              <div class="text-xs text-neutral-500 dark:text-white/60">Mic • hint • smart check</div>
+              <div class="truncate text-sm font-extrabold text-white">Speaking Practice</div>
+              <div class="text-xs text-blue-100 mt-0.5">Mic • hint • smart check</div>
             </div>
-
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="toggleTheme()"
-              aria-label="Toggle theme"
-              title="Theme"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="toggleTheme()" aria-label="Toggle theme">
               <i class="fa-solid fa-moon hidden dark:inline"></i>
               <i class="fa-solid fa-sun inline dark:hidden"></i>
             </button>
@@ -407,42 +528,31 @@
 
         <div class="flex-1 overflow-y-auto px-4 py-6">
           <div class="mx-auto flex max-w-md flex-col items-center gap-4">
-            <div id="uzWord" class="w-full rounded-2xl border border-neutral-200 bg-white p-6 text-center text-2xl font-extrabold tracking-tight shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
+            <div id="uzWord" class="w-full soft-card border border-slate-200 bg-white p-6 text-center text-2xl font-extrabold tracking-tight dark:border-white/10 dark:bg-neutral-800">
               Tap the microphone to start
             </div>
-
-            <div id="speakingResult" class="w-full min-h-[54px] rounded-2xl border border-neutral-200 bg-white p-3 text-center text-base font-extrabold text-neutral-700 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900 dark:text-white/80"></div>
-
+            <div id="speakingResult" class="w-full min-h-[54px] soft-card border border-slate-200 bg-white p-3 text-center text-base font-extrabold slate-sub dark:border-white/10 dark:bg-neutral-800"></div>
             <div class="flex items-center gap-3">
               <button
-                class="inline-flex h-14 w-14 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-                onclick="giveHint()"
-                aria-label="Hint"
-                title="Hint"
-              >
+                class="inline-flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-blue-600 shadow-md transition active:scale-95 dark:border-white/10 dark:bg-neutral-800 dark:text-blue-400"
+                onclick="giveHint()" aria-label="Hint">
                 <i class="fa-solid fa-volume-high"></i>
               </button>
-
               <button
                 id="micButton"
-                class="inline-flex h-20 w-20 items-center justify-center rounded-full bg-neutral-900 text-2xl text-white shadow-[0_24px_80px_rgba(0,0,0,.22)] transition active:scale-95 dark:bg-white dark:text-neutral-900"
-                aria-label="Microphone"
-                title="Microphone"
-              >
+                class="inline-flex h-20 w-20 items-center justify-center rounded-full blue-btn-primary text-2xl shadow-[0_8px_30px_rgba(26,86,219,.4)] transition active:scale-95"
+                aria-label="Microphone">
                 <i class="fa-solid fa-microphone"></i>
               </button>
             </div>
-
             <button
               id="nextWordButton"
-              class="hidden w-full rounded-2xl bg-neutral-900 px-4 py-4 text-sm font-extrabold text-white shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:bg-white dark:text-neutral-900"
-              onclick="nextSpeakingWord()"
-            >
+              class="hidden w-full rounded-3xl blue-btn-primary px-4 py-4 text-sm font-extrabold transition active:scale-[0.99]"
+              onclick="nextSpeakingWord()">
               Next Word →
             </button>
-
-            <div class="w-full rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
-              <div class="font-extrabold text-neutral-900 dark:text-white">Note</div>
+            <div class="w-full soft-card border border-slate-200 bg-slate-50 p-4 text-xs slate-sub dark:border-white/10 dark:bg-white/5">
+              <div class="font-extrabold text-slate-900 dark:text-white">Note</div>
               Speech recognition works best in Chrome/Edge on Android.
             </div>
           </div>
@@ -451,28 +561,20 @@
 
       <!-- ============ SETTINGS ============ -->
       <section id="settings" class="screen h-full flex-col">
-        <header class="sticky top-0 z-20 border-b border-neutral-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-neutral-900/70">
-          <div class="flex items-center justify-between px-4 py-3">
+        <header class="blue-header sticky top-0 z-20">
+          <div class="flex items-center justify-between px-4 py-4">
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="showScreen('home')"
-              aria-label="Back"
-              title="Back"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="showScreen('home')" aria-label="Back">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
-
             <div class="min-w-0 text-center">
-              <div class="truncate text-sm font-extrabold">Settings</div>
-              <div class="text-xs text-neutral-500 dark:text-white/60">Premium controls</div>
+              <div class="truncate text-sm font-extrabold text-white">Settings</div>
+              <div class="text-xs text-blue-100 mt-0.5">Premium controls</div>
             </div>
-
             <button
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-              onclick="toggleTheme()"
-              aria-label="Toggle theme"
-              title="Theme"
-            >
+              class="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-white/20 text-white transition active:scale-95"
+              onclick="toggleTheme()" aria-label="Toggle theme">
               <i class="fa-solid fa-moon hidden dark:inline"></i>
               <i class="fa-solid fa-sun inline dark:hidden"></i>
             </button>
@@ -480,129 +582,96 @@
         </header>
 
         <div class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-          <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
-            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold">
+          <div class="soft-card border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-neutral-800">
+            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold text-blue-700 dark:text-blue-400">
               <i class="fa-solid fa-circle-half-stroke"></i> Theme
             </div>
             <div class="flex gap-2">
-              <button class="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="setTheme('light')">
-                Light
+              <button class="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="setTheme('light')">
+                ☀️ Light
               </button>
-              <button class="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="setTheme('dark')">
-                Dark
+              <button class="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="setTheme('dark')">
+                🌙 Dark
               </button>
             </div>
-            <p class="mt-2 text-xs text-neutral-500 dark:text-white/60">Theme is saved automatically.</p>
+            <p class="mt-2 text-xs slate-sub">Theme is saved automatically.</p>
           </div>
 
-          <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
-            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold">
+          <div class="soft-card border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-neutral-800">
+            <div class="mb-3 flex items-center gap-2 text-sm font-extrabold text-blue-700 dark:text-blue-400">
               <i class="fa-solid fa-volume-high"></i> Voice
             </div>
             <div class="flex flex-wrap gap-2" id="voiceButtonsSettings"></div>
-            <p class="mt-2 text-xs text-neutral-500 dark:text-white/60">Voice affects 🔊 pronunciation everywhere.</p>
+            <p class="mt-2 text-xs slate-sub">Voice affects 🔊 pronunciation everywhere.</p>
           </div>
 
-          <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
-            <div class="mb-2 flex items-center gap-2 text-sm font-extrabold">
+          <div class="soft-card border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-neutral-800">
+            <div class="mb-2 flex items-center gap-2 text-sm font-extrabold text-blue-700 dark:text-blue-400">
               <i class="fa-solid fa-database"></i> Data
             </div>
             <div class="grid gap-2">
-              <button class="w-full rounded-2xl bg-neutral-900 px-4 py-3 text-sm font-extrabold text-white transition active:scale-[0.99] dark:bg-white dark:text-neutral-900" onclick="exportFavorites()">
+              <button class="w-full rounded-3xl blue-btn-primary px-4 py-3 text-sm font-extrabold transition active:scale-[0.99]" onclick="exportFavorites()">
                 Export ⭐ Favorites
               </button>
-              <button class="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="clearFavorites()">
+              <button class="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm font-extrabold transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900" onclick="clearFavorites()">
                 Clear ⭐ Favorites
               </button>
             </div>
-            <p class="mt-2 text-xs text-neutral-500 dark:text-white/60">Favorites are stored in LocalStorage.</p>
+            <p class="mt-2 text-xs slate-sub">Favorites are stored in LocalStorage.</p>
           </div>
 
-          <div class="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-xs text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
-            <div class="font-extrabold text-neutral-900 dark:text-white">Troubleshooting</div>
-            If microphone doesn’t work → allow mic permission, use Chrome/Edge.
+          <div class="soft-card border border-slate-200 bg-slate-50 p-4 text-xs slate-sub dark:border-white/10 dark:bg-white/5">
+            <div class="font-extrabold text-slate-900 dark:text-white">Troubleshooting</div>
+            If microphone doesn't work → allow mic permission, use Chrome/Edge.
           </div>
         </div>
       </section>
-    </div>
+
+    </div><!-- /app shell -->
 
     <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js");
-    });
-  }
-  let deferredPrompt = null;
-  const installBtn = document.getElementById("installBtn");
-
-  // Brauzer install qilishga tayyor bo‘lsa
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault(); // default banner chiqmasin
-    deferredPrompt = e;
-
-    if (installBtn) {
-      installBtn.classList.remove("hidden");
-    }
-  });
-
-  // Tugma bosilganda
-  if (installBtn) {
-    installBtn.addEventListener("click", async () => {
-      if (!deferredPrompt) return;
-
-      deferredPrompt.prompt(); // install oynasi
-      const choice = await deferredPrompt.userChoice;
-
-      if (choice.outcome === "accepted") {
-        console.log("User installed the app");
+      /* ===== PWA ===== */
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => { navigator.serviceWorker.register("./sw.js"); });
       }
+      let deferredPrompt = null;
+      const installBtn = document.getElementById("installBtn");
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) installBtn.classList.remove("hidden");
+      });
+      if (installBtn) {
+        installBtn.addEventListener("click", async () => {
+          if (!deferredPrompt) return;
+          deferredPrompt.prompt();
+          const choice = await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          installBtn.classList.add("hidden");
+        });
+      }
+      window.addEventListener("appinstalled", () => { if (installBtn) installBtn.classList.add("hidden"); });
 
-      deferredPrompt = null;
-      installBtn.classList.add("hidden");
-    });
-  }
+      /* ===== Offline banner ===== */
+      const banner = document.getElementById("offlineBanner");
+      function showOfflineBanner() {
+        if (!banner) return;
+        banner.classList.add("fallback");
+        banner.classList.remove("hidden");
+      }
+      function hideOfflineBanner() {
+        if (!banner) return;
+        banner.classList.add("hidden");
+      }
+      function updateNetworkStatus() {
+        navigator.onLine ? hideOfflineBanner() : showOfflineBanner();
+      }
+      window.addEventListener("online", updateNetworkStatus);
+      window.addEventListener("offline", updateNetworkStatus);
+      updateNetworkStatus();
 
-  // App allaqachon o‘rnatilgan bo‘lsa
-  window.addEventListener("appinstalled", () => {
-    if (installBtn) {
-      installBtn.classList.add("hidden");
-    }
-  });
-
-
-
-
-const banner = document.getElementById("offlineBanner");
-
-function showOfflineBanner() {
-  if (!banner) return;
-
-  // If Tailwind not loaded (offline), add fallback styles
-  banner.classList.add("fallback");
-  banner.classList.remove("hidden");
-}
-
-function hideOfflineBanner() {
-  if (!banner) return;
-  banner.classList.add("hidden");
-}
-
-function updateNetworkStatus() {
-  if (navigator.onLine) {
-    hideOfflineBanner();
-  } else {
-    showOfflineBanner();
-  }
-}
-
-// Listen
-window.addEventListener("online", updateNetworkStatus);
-window.addEventListener("offline", updateNetworkStatus);
-
-// Initial check
-updateNetworkStatus();
       /* =========================
-         WORD DATABASE (your words)
+         WORD DATABASE
       ========================== */
       const words = [
         // Adverbs
@@ -611,7 +680,7 @@ updateNetworkStatus();
         { en: "sometimes", pron: "ˈsʌmtaɪmz", uz: "ba'zan", category: "adverbs" },
         { en: "never", pron: "ˈnevər", uz: "hech qachon", category: "adverbs" },
 
-        // Daily routine
+            // Daily routine
         { en: "get up", pron: "get ʌp", uz: "uyg'onmoq, turmoq", category: "daily routine" },
         { en: "have a shower", pron: "hæv ə ˈʃaʊər", uz: "dush qilmoq", category: "daily routine" },
 
@@ -1129,14 +1198,13 @@ updateNetworkStatus();
   { en: "editor", pron: "", uz: "muharrir", category: "14-dars" },
   { en: "until", pron: "", uz: "gacha", category: "14-dars" },
   { en: "appointment", pron: "", uz: "uchrashuv / lavozim", category: "14-dars" }
-
       ];
 
       const categoryInfo = {
-        all: { name: "All", icon: "fa-solid fa-globe" },
-        favorites: { name: "⭐ Favorites", icon: "fa-solid fa-star" },
-        adverbs: { name: "Adverbs", icon: "fa-solid fa-a" },
-        "daily routine": { name: "Daily Routine", icon: "fa-solid fa-calendar-day" },
+        all:            { name: "All",          icon: "fa-solid fa-globe" },
+        favorites:      { name: "⭐ Favorites",  icon: "fa-solid fa-star" },
+        adverbs:        { name: "Adverbs",       icon: "fa-solid fa-a" },
+        "daily routine":{ name: "Daily Routine", icon: "fa-solid fa-calendar-day" },
       };
 
       /* =========================
@@ -1144,7 +1212,7 @@ updateNetworkStatus();
       ========================== */
       const LS_THEME = "el_theme_v1";
       const LS_VOICE = "el_voice_v1";
-      const LS_FAVS = "el_favorites_v1";
+      const LS_FAVS  = "el_favorites_v1";
 
       let appSettings = {
         theme: "dark",
@@ -1152,173 +1220,135 @@ updateNetworkStatus();
         memorizationCategory: "all",
         quizCategory: "all",
         speakingCategory: "all",
+        flashcardsCategory: "all",
         nextScreen: null,
         search: "",
       };
 
       let favorites = new Set(loadFavorites());
-
       let currentWord = null;
-      let quizScore = 0;
-      let quizTotal = 0;
+      let quizScore = 0, quizTotal = 0;
+      let recognition = null, isListening = false;
 
-      let recognition = null;
-      let isListening = false;
+      /* === Flashcard state === */
+      let fcPool = [];
+      let fcIndex = 0;
+      let fcKnownCount = 0, fcUnknownCount = 0;
+      let currentFlashcard = null;
+      let fcIsFlipped = false;
 
       /* =========================
          HELPERS
       ========================== */
       function escapeHTML(str) {
         return String(str)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
+          .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;").replaceAll("'","&#039;");
       }
       function escapeQuotes(str) {
-        return String(str).replaceAll("\\", "\\\\").replaceAll("'", "\\'");
+        return String(str).replaceAll("\\","\\\\").replaceAll("'","\\'");
       }
-      function escapeRegExp(s) {
-        return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      }
+      function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
       function highlightText(escapedHtml, q) {
         if (!q) return escapedHtml;
-        const re = new RegExp(`(${escapeRegExp(q)})`, "ig");
-        return escapedHtml.replace(re, `<mark class="hl bg-yellow-200 text-neutral-900 dark:bg-yellow-300">$1</mark>`);
+        const re = new RegExp(`(${escapeRegExp(q)})`,"ig");
+        return escapedHtml.replace(re,`<mark class="hl bg-yellow-200 text-neutral-900 dark:bg-yellow-300">$1</mark>`);
       }
-      function wordId(w) {
-        return `${w.en}|||${w.category}`.toLowerCase();
-      }
+      function wordId(w) { return `${w.en}|||${w.category}`.toLowerCase(); }
 
       /* =========================
-         THEME (saved)
+         THEME
       ========================== */
       function applyTheme() {
         document.documentElement.classList.toggle("dark", appSettings.theme === "dark");
         localStorage.setItem(LS_THEME, appSettings.theme);
       }
-      function setTheme(theme) {
-        appSettings.theme = theme;
-        applyTheme();
-      }
-      function toggleTheme() {
-        setTheme(appSettings.theme === "dark" ? "light" : "dark");
-      }
+      function setTheme(t) { appSettings.theme = t; applyTheme(); }
+      function toggleTheme() { setTheme(appSettings.theme === "dark" ? "light" : "dark"); }
 
       /* =========================
-         FAVORITES (saved)
+         FAVORITES
       ========================== */
       function loadFavorites() {
-        try {
-          return JSON.parse(localStorage.getItem(LS_FAVS) || "[]");
-        } catch {
-          return [];
-        }
+        try { return JSON.parse(localStorage.getItem(LS_FAVS) || "[]"); } catch { return []; }
       }
-      function saveFavorites() {
-        localStorage.setItem(LS_FAVS, JSON.stringify([...favorites]));
-      }
+      function saveFavorites() { localStorage.setItem(LS_FAVS, JSON.stringify([...favorites])); }
       function toggleFavorite(id) {
-        if (favorites.has(id)) favorites.delete(id);
-        else favorites.add(id);
-        saveFavorites();
-        loadWords();
+        favorites.has(id) ? favorites.delete(id) : favorites.add(id);
+        saveFavorites(); loadWords();
       }
-      function clearFavorites() {
-        favorites = new Set();
-        saveFavorites();
-        alert("Favorites cleared ✅");
-        loadWords();
-      }
+      function clearFavorites() { favorites = new Set(); saveFavorites(); alert("Favorites cleared ✅"); loadWords(); }
       function exportFavorites() {
-        const favWords = words.filter((w) => favorites.has(wordId(w)));
-        const text = favWords.map((w) => `${w.en} — ${w.uz}  /${w.pron}/  [${w.category}]`).join("\n");
-        if (!text.trim()) {
-          alert("No favorites yet ⭐");
-          return;
-        }
-        // Copy to clipboard if possible
+        const favWords = words.filter(w => favorites.has(wordId(w)));
+        const text = favWords.map(w => `${w.en} — ${w.uz}  /${w.pron}/  [${w.category}]`).join("\n");
+        if (!text.trim()) { alert("No favorites yet ⭐"); return; }
         if (navigator.clipboard?.writeText) {
           navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard ✅"));
-        } else {
-          // fallback
-          prompt("Copy favorites:", text);
-        }
+        } else { prompt("Copy favorites:", text); }
       }
 
       /* =========================
          NAVIGATION
       ========================== */
       function showScreen(screenId) {
-        document.querySelectorAll(".screen, .category-selection").forEach((s) => s.classList.remove("active"));
+        document.querySelectorAll(".screen, .category-selection").forEach(s => s.classList.remove("active"));
         const el = document.getElementById(screenId);
         if (el) el.classList.add("active");
-
         if (screenId === "memorize") loadWords();
-        if (screenId === "quiz") {
-          resetQuiz();
-          nextQuestion();
-        }
+        if (screenId === "quiz") { resetQuiz(); nextQuestion(); }
         if (screenId === "speaking") nextSpeakingWord();
+        if (screenId === "flashcards") startFlashcards();
       }
 
       function showCategorySelection(nextScreen) {
         appSettings.nextScreen = nextScreen;
-
         const title = document.getElementById("categoryTitle");
-        title.textContent =
-          nextScreen === "memorize" ? "Select Category — Memorize"
-          : nextScreen === "quiz" ? "Select Category — Quiz"
-          : "Select Category — Speaking";
+        const titles = { memorize:"Memorize — Kategoriya", quiz:"Quiz — Kategoriya", speaking:"Speaking — Kategoriya", flashcards:"Flashcards — Kategoriya" };
+        title.textContent = titles[nextScreen] || "Select Category";
 
-        const categories = ["all", ...new Set(words.map((w) => w.category))];
-
+        const categories = ["all", ...new Set(words.map(w => w.category))];
         const grid = document.getElementById("categoryGrid");
-        grid.innerHTML = categories
-          .map((cat) => {
-            const meta = categoryInfo[cat] || { name: cat, icon: "fa-solid fa-folder" };
-            return `
-              <button
-                class="tap rounded-2xl border border-neutral-200 bg-white p-4 text-left shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-900"
-                onclick="selectCategory('${escapeQuotes(cat)}')"
-              >
-                <div class="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-white/10 dark:bg-white/5 dark:text-white">
-                  <i class="${meta.icon}"></i>
-                </div>
-                <div class="text-sm font-extrabold tracking-tight">${escapeHTML(meta.name)}</div>
-                <div class="text-xs text-neutral-500 dark:text-white/60">Tap to choose</div>
-              </button>
-            `;
-          })
-          .join("");
+        grid.innerHTML = categories.map(cat => {
+          const meta = categoryInfo[cat] || { name: cat, icon: "fa-solid fa-folder" };
+          return `
+            <button
+              class="tap soft-card border border-slate-200 bg-white p-4 text-left transition active:scale-[0.99] dark:border-white/10 dark:bg-neutral-800"
+              onclick="selectCategory('${escapeQuotes(cat)}')">
+              <div class="mb-2 nav-icon-card flex h-11 w-11 items-center justify-center">
+                <i class="${meta.icon}"></i>
+              </div>
+              <div class="text-sm font-extrabold tracking-tight">${escapeHTML(meta.name)}</div>
+              <div class="text-xs slate-sub">Tap to choose</div>
+            </button>`;
+        }).join("");
 
         showScreen("categorySelection");
       }
 
       function selectCategory(category) {
-        if (appSettings.nextScreen === "memorize") {
+        const ns = appSettings.nextScreen;
+        if (ns === "memorize") {
           appSettings.memorizationCategory = category;
           appSettings.search = "";
           const si = document.getElementById("searchInput");
           if (si) si.value = "";
           showScreen("memorize");
-        } else if (appSettings.nextScreen === "quiz") {
+        } else if (ns === "quiz") {
           appSettings.quizCategory = category;
           showScreen("quiz");
-        } else if (appSettings.nextScreen === "speaking") {
+        } else if (ns === "speaking") {
           appSettings.speakingCategory = category;
           showScreen("speaking");
+        } else if (ns === "flashcards") {
+          appSettings.flashcardsCategory = category;
+          showScreen("flashcards");
         }
       }
 
       /* =========================
          SEARCH
       ========================== */
-      function onSearchChange(val) {
-        appSettings.search = (val || "").trim().toLowerCase();
-        loadWords();
-      }
+      function onSearchChange(val) { appSettings.search = (val || "").trim().toLowerCase(); loadWords(); }
       function clearSearch() {
         appSettings.search = "";
         const si = document.getElementById("searchInput");
@@ -1327,32 +1357,20 @@ updateNetworkStatus();
       }
 
       /* =========================
-         VOICE (saved)
+         VOICE
       ========================== */
       function speakWord(text) {
+        if (!text) return;
         speechSynthesis.cancel();
         setTimeout(() => {
           const u = new SpeechSynthesisUtterance(text);
           u.lang = "en-US";
-
           switch (appSettings.voice) {
-            case "male":
-              u.rate = 0.9;
-              u.pitch = 0.7;
-              break;
-            case "child":
-              u.rate = 0.8;
-              u.pitch = 1.5;
-              break;
-            case "slow":
-              u.rate = 0.6;
-              u.pitch = 1.0;
-              break;
-            default:
-              u.rate = 0.9;
-              u.pitch = 1.2;
+            case "male":   u.rate = 0.9; u.pitch = 0.7; break;
+            case "child":  u.rate = 0.8; u.pitch = 1.5; break;
+            case "slow":   u.rate = 0.6; u.pitch = 1.0; break;
+            default:       u.rate = 0.9; u.pitch = 1.2;
           }
-
           u.volume = 1.0;
           speechSynthesis.speak(u);
         }, 60);
@@ -1367,21 +1385,18 @@ updateNetworkStatus();
       function renderVoiceButtons() {
         const voices = [
           { key: "female", label: "Female" },
-          { key: "male", label: "Male" },
-          { key: "child", label: "Child" },
-          { key: "slow", label: "Slow" },
+          { key: "male",   label: "Male"   },
+          { key: "child",  label: "Child"  },
+          { key: "slow",   label: "Slow"   },
         ];
-
-        const makeBtn = (v) => {
+        const makeBtn = v => {
           const active = appSettings.voice === v.key;
-          const cls =
-            "rounded-full border px-3 py-2 text-xs font-extrabold transition active:scale-95 " +
+          const cls = "rounded-full border px-3 py-2 text-xs font-extrabold transition active:scale-95 " +
             (active
-              ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900"
-              : "border-neutral-200 bg-white text-neutral-900 dark:border-white/10 dark:bg-neutral-900 dark:text-white");
+              ? "border-blue-600 bg-blue-600 text-white dark:border-blue-400 dark:bg-blue-400 dark:text-neutral-900"
+              : "border-slate-200 bg-white text-slate-900 dark:border-white/10 dark:bg-neutral-900 dark:text-white");
           return `<button class="${cls}" onclick="setVoice('${v.key}')">${v.label}</button>`;
         };
-
         const html = voices.map(makeBtn).join("");
         const a = document.getElementById("voiceButtonsMemorize");
         const b = document.getElementById("voiceButtonsSettings");
@@ -1390,104 +1405,79 @@ updateNetworkStatus();
       }
 
       /* =========================
-         MEMORIZE (list)
+         MEMORIZE
       ========================== */
       function loadWords() {
-        const wordList = document.getElementById("wordList");
-        const wordCounter = document.getElementById("wordCounter");
+        const wordList     = document.getElementById("wordList");
+        const wordCounter  = document.getElementById("wordCounter");
         const categoryFilter = document.getElementById("categoryFilter");
 
-        // chips (include favorites)
-        const categories = ["all", "favorites", ...new Set(words.map((w) => w.category))];
-        categoryFilter.innerHTML = categories
-          .map((cat) => {
-            const active = cat === appSettings.memorizationCategory;
-            const label = categoryInfo[cat]?.name || cat;
-            const base = "whitespace-nowrap rounded-full border px-3 py-2 text-xs font-extrabold transition active:scale-95";
-            const activeCls = "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-neutral-900";
-            const idleCls = "border-neutral-200 bg-white text-neutral-900 dark:border-white/10 dark:bg-neutral-900 dark:text-white";
-            return `<button class="${base} ${active ? activeCls : idleCls}" onclick="filterMemorization('${escapeQuotes(cat)}')">${escapeHTML(label)}</button>`;
-          })
-          .join("");
+        const categories = ["all","favorites",...new Set(words.map(w => w.category))];
+        categoryFilter.innerHTML = categories.map(cat => {
+          const active = cat === appSettings.memorizationCategory;
+          const label  = categoryInfo[cat]?.name || cat;
+          const base   = "whitespace-nowrap rounded-full border px-3 py-2 text-xs font-extrabold transition active:scale-95";
+          const activeCls = "blue-chip-active";
+          const idleCls   = "border-slate-200 bg-white text-slate-900 dark:border-white/10 dark:bg-neutral-900 dark:text-white";
+          return `<button class="${base} ${active ? activeCls : idleCls}" onclick="filterMemorization('${escapeQuotes(cat)}')">${escapeHTML(label)}</button>`;
+        }).join("");
 
-        // filter by category
         let list = words;
         if (appSettings.memorizationCategory === "favorites") {
-          list = words.filter((w) => favorites.has(wordId(w)));
+          list = words.filter(w => favorites.has(wordId(w)));
         } else if (appSettings.memorizationCategory !== "all") {
-          list = words.filter((w) => w.category === appSettings.memorizationCategory);
+          list = words.filter(w => w.category === appSettings.memorizationCategory);
         }
 
-        // search filter
         const q = appSettings.search;
         if (q) {
-          list = list.filter(
-            (w) =>
-              w.en.toLowerCase().includes(q) ||
-              w.uz.toLowerCase().includes(q) ||
-              (w.pron || "").toLowerCase().includes(q)
+          list = list.filter(w =>
+            w.en.toLowerCase().includes(q) ||
+            w.uz.toLowerCase().includes(q) ||
+            (w.pron||"").toLowerCase().includes(q)
           );
         }
 
         wordCounter.innerHTML = `
-          <span class="h-2 w-2 rounded-full bg-neutral-900 dark:bg-white"></span>
-          <span><b class="text-neutral-900 dark:text-white">${list.length}</b> words</span>
-        `;
+          <span class="h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+          <span><b class="text-blue-700 dark:text-blue-300">${list.length}</b> words</span>`;
 
         if (!list.length) {
-          wordList.innerHTML = `
-            <div class="rounded-2xl border border-neutral-200 bg-white p-4 text-sm font-extrabold text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-white/80">
-              No words found.
-            </div>
-          `;
+          wordList.innerHTML = `<div class="soft-card border border-slate-200 bg-white p-4 text-sm font-extrabold slate-sub dark:border-white/10 dark:bg-neutral-800">No words found.</div>`;
           return;
         }
 
-        wordList.innerHTML = list
-          .map((w) => {
-            const id = wordId(w);
-            const fav = favorites.has(id);
-
-            const enEsc = escapeHTML(w.en);
-            const uzEsc = escapeHTML(w.uz);
-            const prEsc = escapeHTML(w.pron || "");
-
-            return `
-              <div class="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,.10)] dark:border-white/10 dark:bg-neutral-900">
-                <div class="flex items-start justify-between gap-3">
-                  <div class="min-w-0">
-                    <div class="text-lg font-extrabold tracking-tight">${highlightText(enEsc, q)}</div>
-                    <div class="mt-1 text-sm text-neutral-600 dark:text-white/70">${highlightText(uzEsc, q)}</div>
-                    <div class="mt-2 inline-flex rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-bold text-neutral-700 dark:border-white/10 dark:bg-white/5 dark:text-white/70">
-                      /${highlightText(prEsc, q)}/
-                    </div>
-                 
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <button
-                      class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-                      onclick="speakWord('${escapeQuotes(w.en)}')"
-                      aria-label="Speak"
-                      title="Speak"
-                    >
-                      <i class="fa-solid fa-volume-high"></i>
-                    </button>
-
-                    <button
-                      class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-                      onclick="toggleFavorite('${escapeQuotes(id)}')"
-                      aria-label="Favorite"
-                      title="Favorite"
-                    >
-                      <i class="fa-${fav ? "solid" : "regular"} fa-star ${fav ? "text-yellow-500" : ""}"></i>
-                    </button>
+        wordList.innerHTML = list.map(w => {
+          const id  = wordId(w);
+          const fav = favorites.has(id);
+          const enEsc = escapeHTML(w.en);
+          const uzEsc = escapeHTML(w.uz);
+          const prEsc = escapeHTML(w.pron || "");
+          return `
+            <div class="soft-card border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-neutral-800">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="text-lg font-extrabold tracking-tight">${highlightText(enEsc, q)}</div>
+                  <div class="mt-1 text-sm slate-sub">${highlightText(uzEsc, q)}</div>
+                  <div class="mt-2 inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold slate-sub dark:border-white/10 dark:bg-white/5">
+                    /${highlightText(prEsc, q)}/
                   </div>
                 </div>
+                <div class="flex flex-col gap-2">
+                  <button
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-blue-600 shadow-sm transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-blue-400"
+                    onclick="speakWord('${escapeQuotes(w.en)}')" aria-label="Speak">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                  <button
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm transition active:scale-95 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
+                    onclick="toggleFavorite('${escapeQuotes(id)}')" aria-label="Favorite">
+                    <i class="fa-${fav ? "solid" : "regular"} fa-star ${fav ? "text-yellow-500" : ""}"></i>
+                  </button>
+                </div>
               </div>
-            `;
-          })
-          .join("");
+            </div>`;
+        }).join("");
       }
 
       function filterMemorization(category) {
@@ -1496,33 +1486,106 @@ updateNetworkStatus();
       }
 
       /* =========================
+         FLASHCARDS
+      ========================== */
+      function startFlashcards() {
+        // Build pool
+        if (appSettings.flashcardsCategory === "all") {
+          fcPool = [...words];
+        } else {
+          fcPool = words.filter(w => w.category === appSettings.flashcardsCategory);
+        }
+        // Shuffle
+        for (let i = fcPool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [fcPool[i], fcPool[j]] = [fcPool[j], fcPool[i]];
+        }
+        fcIndex = 0;
+        fcKnownCount = 0;
+        fcUnknownCount = 0;
+        document.getElementById("fcResult").classList.add("hidden");
+        document.getElementById("fcButtons").classList.remove("hidden");
+        document.getElementById("flashcardScene").classList.remove("hidden");
+
+        updateFcCounter();
+        showFcCard();
+      }
+
+      function showFcCard() {
+        if (fcIndex >= fcPool.length) {
+          showFcResult();
+          return;
+        }
+        currentFlashcard = fcPool[fcIndex];
+        fcIsFlipped = false;
+
+        const scene = document.getElementById("flashcardScene");
+        scene.classList.remove("flipped");
+
+        document.getElementById("fcFrontWord").textContent = currentFlashcard.en;
+        document.getElementById("fcFrontPron").textContent = `/${currentFlashcard.pron || ""}/`;
+        document.getElementById("fcBackWord").textContent  = currentFlashcard.uz;
+        document.getElementById("fcBackEn").textContent    = currentFlashcard.en;
+
+        updateFcCounter();
+      }
+
+      function flipCard() {
+        fcIsFlipped = !fcIsFlipped;
+        const scene = document.getElementById("flashcardScene");
+        scene.classList.toggle("flipped", fcIsFlipped);
+        if (fcIsFlipped) speakWord(currentFlashcard?.en);
+      }
+
+      function fcAnswer(known) {
+        if (known) fcKnownCount++;
+        else fcUnknownCount++;
+        fcIndex++;
+        document.getElementById("fcKnown").textContent   = fcKnownCount;
+        document.getElementById("fcUnknown").textContent = fcUnknownCount;
+        updateFcCounter();
+        showFcCard();
+      }
+
+      function updateFcCounter() {
+        const total = fcPool.length;
+        document.getElementById("fcTotal").textContent = total;
+        document.getElementById("fcIndex").textContent = Math.min(fcIndex + 1, total);
+        const pct = total > 0 ? (fcIndex / total) * 100 : 0;
+        document.getElementById("fcProgress").style.width = pct + "%";
+      }
+
+      function showFcResult() {
+        document.getElementById("fcResult").classList.remove("hidden");
+        document.getElementById("fcButtons").classList.add("hidden");
+        document.getElementById("flashcardScene").classList.add("hidden");
+        document.getElementById("fcResultKnown").textContent   = fcKnownCount;
+        document.getElementById("fcResultUnknown").textContent = fcUnknownCount;
+        document.getElementById("fcProgress").style.width = "100%";
+      }
+
+      /* =========================
          QUIZ
       ========================== */
       function resetQuiz() {
-        quizScore = 0;
-        quizTotal = 0;
+        quizScore = 0; quizTotal = 0;
         document.getElementById("scoreValue").textContent = "0";
         document.getElementById("totalValue").textContent = "0";
         document.getElementById("quizProgress").style.width = "0%";
         document.getElementById("feedback").textContent = "";
-        document.getElementById("feedback").classList.remove("text-green-600", "text-red-600");
+        document.getElementById("feedback").classList.remove("text-green-600","text-red-600");
         document.getElementById("nextButton").style.display = "block";
       }
 
       function nextQuestion() {
         const nextBtn = document.getElementById("nextButton");
         nextBtn.style.display = "none";
-
         const feedback = document.getElementById("feedback");
         feedback.textContent = "";
-        feedback.classList.remove("text-green-600", "text-red-600");
+        feedback.classList.remove("text-green-600","text-red-600");
 
-        const isEnglishToUzbek = Math.random() < 0.5;
-
-        const pool =
-          appSettings.quizCategory === "all"
-            ? words
-            : words.filter((w) => w.category === appSettings.quizCategory);
+        const isEnToUz = Math.random() < 0.5;
+        const pool = appSettings.quizCategory === "all" ? words : words.filter(w => w.category === appSettings.quizCategory);
 
         if (!pool.length) {
           document.getElementById("questionText").textContent = "No words in this category";
@@ -1532,83 +1595,66 @@ updateNetworkStatus();
         }
 
         const correctWord = pool[Math.floor(Math.random() * pool.length)];
-        document.getElementById("questionText").textContent = isEnglishToUzbek ? correctWord.en : correctWord.uz;
+        document.getElementById("questionText").textContent = isEnToUz ? correctWord.en : correctWord.uz;
 
         let options = [correctWord];
         while (options.length < 4) {
           const r = pool[Math.floor(Math.random() * pool.length)];
-          if (!options.some((o) => o.en === r.en)) options.push(r);
+          if (!options.some(o => o.en === r.en)) options.push(r);
         }
         options.sort(() => Math.random() - 0.5);
 
-        document.getElementById("optionsContainer").innerHTML = options
-          .map((opt) => {
-            return `
-              <button
-                class="opt-btn w-full rounded-2xl border border-neutral-200 bg-white px-4 py-4 text-left text-sm font-extrabold text-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,.10)] transition active:scale-[0.99]
-                       disabled:opacity-60 disabled:active:scale-100 dark:border-white/10 dark:bg-neutral-900 dark:text-white"
-                onclick="selectAnswer(this, '${escapeQuotes(opt.en)}', '${escapeQuotes(correctWord.en)}', ${isEnglishToUzbek})"
-              >
-                ${isEnglishToUzbek ? escapeHTML(opt.uz) : escapeHTML(opt.en)}
-              </button>
-            `;
-          })
-          .join("");
+        document.getElementById("optionsContainer").innerHTML = options.map(opt => `
+          <button
+            class="opt-btn w-full rounded-3xl border border-slate-200 bg-white px-4 py-4 text-left text-sm font-extrabold text-slate-900 shadow-sm transition active:scale-[0.99]
+                   disabled:opacity-60 disabled:active:scale-100 dark:border-white/10 dark:bg-neutral-800 dark:text-white"
+            onclick="selectAnswer(this,'${escapeQuotes(opt.en)}','${escapeQuotes(correctWord.en)}',${isEnToUz})">
+            ${isEnToUz ? escapeHTML(opt.uz) : escapeHTML(opt.en)}
+          </button>`).join("");
 
-        document.getElementById("quizProgress").style.width = `${Math.min(100, (quizTotal / 10) * 100)}%`;
+        document.getElementById("quizProgress").style.width = `${Math.min(100,(quizTotal/10)*100)}%`;
       }
 
-      function selectAnswer(el, selectedEn, correctEn, isEnglishToUzbek) {
+      function selectAnswer(el, selectedEn, correctEn, isEnToUz) {
         quizTotal++;
         document.getElementById("totalValue").textContent = quizTotal;
-
         const feedback = document.getElementById("feedback");
 
         if (selectedEn === correctEn) {
           quizScore++;
           document.getElementById("scoreValue").textContent = quizScore;
-          el.classList.add("border-green-500");
+          el.classList.add("border-green-500","bg-green-50","dark:bg-green-900/20");
           feedback.textContent = "✅ Correct!";
           feedback.classList.add("text-green-600");
           speakWord(correctEn);
         } else {
-          el.classList.add("border-red-500");
-
-          const correctTranslation = isEnglishToUzbek
-            ? (words.find((w) => w.en === correctEn)?.uz || correctEn)
+          el.classList.add("border-red-500","bg-red-50","dark:bg-red-900/20");
+          const correctTranslation = isEnToUz
+            ? (words.find(w => w.en === correctEn)?.uz || correctEn)
             : correctEn;
-
           feedback.textContent = `❌ Correct: ${correctTranslation}`;
           feedback.classList.add("text-red-600");
-
-          // mark correct option
-          document.querySelectorAll(".opt-btn").forEach((btn) => {
-            const t = btn.textContent.trim();
-            if (t === correctTranslation) btn.classList.add("border-green-500");
+          document.querySelectorAll(".opt-btn").forEach(btn => {
+            if (btn.textContent.trim() === correctTranslation) btn.classList.add("border-green-500","bg-green-50");
           });
         }
 
-        document.querySelectorAll(".opt-btn").forEach((btn) => (btn.disabled = true));
+        document.querySelectorAll(".opt-btn").forEach(btn => btn.disabled = true);
         document.getElementById("nextButton").style.display = "block";
-        document.getElementById("quizProgress").style.width = `${Math.min(100, (quizTotal / 10) * 100)}%`;
+        document.getElementById("quizProgress").style.width = `${Math.min(100,(quizTotal/10)*100)}%`;
       }
 
       /* =========================
          SPEAKING
       ========================== */
-      function giveHint() {
-        if (currentWord) speakWord(currentWord.en);
-      }
+      function giveHint() { if (currentWord) speakWord(currentWord.en); }
 
       function nextSpeakingWord() {
-        const pool =
-          appSettings.speakingCategory === "all"
-            ? words
-            : words.filter((w) => w.category === appSettings.speakingCategory);
-
-        const uzEl = document.getElementById("uzWord");
+        const pool = appSettings.speakingCategory === "all"
+          ? words : words.filter(w => w.category === appSettings.speakingCategory);
+        const uzEl  = document.getElementById("uzWord");
         const resEl = document.getElementById("speakingResult");
-        const mic = document.getElementById("micButton");
+        const mic   = document.getElementById("micButton");
         const nextBtn = document.getElementById("nextWordButton");
 
         if (!pool.length) {
@@ -1620,33 +1666,21 @@ updateNetworkStatus();
 
         currentWord = pool[Math.floor(Math.random() * pool.length)];
         uzEl.textContent = currentWord.uz;
-
         resEl.textContent = "Tap microphone and say the word";
-        resEl.classList.remove("text-green-600", "text-red-600");
-
+        resEl.classList.remove("text-green-600","text-red-600");
         nextBtn.classList.add("hidden");
-        mic.classList.remove("ring-4", "ring-neutral-300", "dark:ring-white/20");
-
-        if (recognition) {
-          try { recognition.stop(); } catch (e) {}
-        }
+        mic.classList.remove("ring-4","ring-blue-300","dark:ring-blue-500/50");
+        if (recognition) { try { recognition.stop(); } catch(e){} }
         isListening = false;
       }
 
       document.getElementById("micButton").addEventListener("click", () => {
-        if (isListening) {
-          stopListening();
-          return;
-        }
-        startListening();
+        isListening ? stopListening() : startListening();
       });
 
       function startListening() {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SR) {
-          alert("Speech recognition is not supported. Use Chrome/Edge.");
-          return;
-        }
+        if (!SR) { alert("Speech recognition is not supported. Use Chrome/Edge."); return; }
 
         recognition = new SR();
         recognition.lang = "en-US";
@@ -1654,31 +1688,27 @@ updateNetworkStatus();
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
-        const mic = document.getElementById("micButton");
+        const mic   = document.getElementById("micButton");
         const resEl = document.getElementById("speakingResult");
 
         recognition.onstart = () => {
           isListening = true;
-          mic.classList.add("ring-4", "ring-neutral-300", "dark:ring-white/20");
+          mic.classList.add("ring-4","ring-blue-300","dark:ring-blue-500/50");
           resEl.textContent = "Listening... Speak now";
-          resEl.classList.remove("text-green-600", "text-red-600");
+          resEl.classList.remove("text-green-600","text-red-600");
         };
 
         recognition.onresult = (event) => {
-          const spoken = event.results[0][0].transcript.trim().toLowerCase();
+          const spoken  = event.results[0][0].transcript.trim().toLowerCase();
           const correct = (currentWord?.en || "").toLowerCase();
-
           let ok = false;
           if (spoken === correct) ok = true;
           else if (levenshteinDistance(spoken, correct) <= 2) ok = true;
           else {
-            const s = spoken.split(/\s+/);
-            const c = correct.split(/\s+/);
+            const s = spoken.split(/\s+/), c = correct.split(/\s+/);
             if (s.length === c.length) {
               let match = 0;
-              for (let i = 0; i < s.length; i++) {
-                if (levenshteinDistance(s[i], c[i]) <= 1) match++;
-              }
+              for (let i=0; i<s.length; i++) { if (levenshteinDistance(s[i],c[i]) <= 1) match++; }
               ok = match / c.length >= 0.8;
             }
           }
@@ -1687,63 +1717,44 @@ updateNetworkStatus();
             resEl.textContent = "✅ Perfect! Correct pronunciation!";
             resEl.classList.add("text-green-600");
             speakWord("Excellent!");
-
             setTimeout(() => nextSpeakingWord(), 1200);
           } else {
             resEl.textContent = `❌ Try again. You said: "${spoken}"`;
             resEl.classList.add("text-red-600");
-
-            setTimeout(() => {
-              resEl.textContent = "Try again. Tap microphone";
-              stopListening();
-            }, 1400);
+            setTimeout(() => { resEl.textContent = "Try again. Tap microphone"; stopListening(); }, 1400);
           }
         };
 
         recognition.onerror = (event) => {
-          const resEl = document.getElementById("speakingResult");
           resEl.classList.add("text-red-600");
-
-          if (event.error === "no-speech") resEl.textContent = "No speech detected. Try again.";
+          if (event.error === "no-speech")      resEl.textContent = "No speech detected. Try again.";
           else if (event.error === "audio-capture") resEl.textContent = "No microphone found.";
-          else if (event.error === "not-allowed") resEl.textContent = "Microphone permission denied.";
+          else if (event.error === "not-allowed")   resEl.textContent = "Microphone permission denied.";
           else resEl.textContent = "Error occurred. Try again.";
-
           stopListening();
         };
 
         recognition.onend = () => stopListening();
-
-        try {
-          recognition.start();
-        } catch (e) {
-          document.getElementById("speakingResult").textContent = "Error starting recognition";
-          stopListening();
-        }
+        try { recognition.start(); }
+        catch(e) { document.getElementById("speakingResult").textContent = "Error starting recognition"; stopListening(); }
       }
 
       function stopListening() {
-        if (recognition) {
-          try { recognition.stop(); } catch (e) {}
-        }
+        if (recognition) { try { recognition.stop(); } catch(e){} }
         isListening = false;
-        document.getElementById("micButton").classList.remove("ring-4", "ring-neutral-300", "dark:ring-white/20");
+        document.getElementById("micButton").classList.remove("ring-4","ring-blue-300","dark:ring-blue-500/50");
       }
 
       function levenshteinDistance(a, b) {
         if (a.length === 0) return b.length;
         if (b.length === 0) return a.length;
         const matrix = [];
-        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-        for (let i = 1; i <= b.length; i++) {
-          for (let j = 1; j <= a.length; j++) {
-            if (b.charAt(i - 1) === a.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1];
-            else matrix[i][j] = Math.min(
-              matrix[i - 1][j - 1] + 1,
-              matrix[i][j - 1] + 1,
-              matrix[i - 1][j] + 1
-            );
+        for (let i=0; i<=b.length; i++) matrix[i] = [i];
+        for (let j=0; j<=a.length; j++) matrix[0][j] = j;
+        for (let i=1; i<=b.length; i++) {
+          for (let j=1; j<=a.length; j++) {
+            if (b.charAt(i-1)===a.charAt(j-1)) matrix[i][j] = matrix[i-1][j-1];
+            else matrix[i][j] = Math.min(matrix[i-1][j-1]+1, matrix[i][j-1]+1, matrix[i-1][j]+1);
           }
         }
         return matrix[b.length][a.length];
@@ -1753,13 +1764,10 @@ updateNetworkStatus();
          INIT
       ========================== */
       window.onload = () => {
-        // load theme/voice
         const savedTheme = localStorage.getItem(LS_THEME);
         const savedVoice = localStorage.getItem(LS_VOICE);
-
         if (savedTheme === "light" || savedTheme === "dark") appSettings.theme = savedTheme;
         if (savedVoice) appSettings.voice = savedVoice;
-
         applyTheme();
         renderVoiceButtons();
       };
